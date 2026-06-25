@@ -22,10 +22,12 @@ Skills under `skills/` are auto-discovered — there's no need to list them in t
 | `drive-codex` | `/drive-codex` | Delegate coding tasks to the OpenAI Codex CLI (`codex exec`). |
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
 | `vulnerability-scan` | `/vulnerability-scan` | Scan the org's GitHub repos for exposure to a given CVE/advisory. |
+| `infra-access` | auto / `/infra-access` | How to reach deployed staging/production resources — kubectl, port-forwarding to Postgres/Kafka, AWS CLI, `snow`. |
 | `hello-world` | `hello world` | Minimal smoke test that confirms the plugin is installed. |
 
-All skills except `hello-world` set `disable-model-invocation: true`, so they only fire when you
-invoke them explicitly as a slash command — Claude won't trigger them on its own.
+`hello-world` and `infra-access` are model-invocable — Claude pulls them in automatically when
+relevant. The rest set `disable-model-invocation: true`, so they only fire when you invoke them
+explicitly as a slash command.
 
 ## Adding a skill
 
