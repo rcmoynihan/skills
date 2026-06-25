@@ -1,0 +1,23 @@
+{
+  "name": "rmoynihan",
+  "owner": {
+    "name": "Riley Moynihan",
+    "email": "rmoynihan@crunchbase.com"
+  },
+  "metadata": {
+    "description": "Riley's personal collection of agent skills and resources.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "rmoynihan-skills",
+      "description": "Riley's personal collection of agent skills and resources.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Riley Moynihan",
+        "email": "rmoynihan@crunchbase.com"
+      },
+      "source": "."
+    }
+  ]
+}
