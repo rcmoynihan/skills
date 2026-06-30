@@ -7,12 +7,15 @@ Riley's personal collection of agent skills and resources, packaged as a Claude 
 ```
 .claude-plugin/
   plugin.json          # plugin manifest (name, description, version, author)
+agents/
+  <agent>.md           # custom subagents a skill dispatches by name (flat — no subdirs)
 skills/
   <skill-name>/
     SKILL.md           # one skill per directory
 ```
 
-Skills under `skills/` are auto-discovered — there's no need to list them in the manifest.
+Skills under `skills/` and agents under `agents/` are auto-discovered — there's no need to list
+them in the manifest.
 
 ## Skills
 
@@ -23,11 +26,15 @@ Skills under `skills/` are auto-discovered — there's no need to list them in t
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
 | `vulnerability-scan` | `/vulnerability-scan` | Scan the org's GitHub repos for exposure to a given CVE/advisory. |
 | `infra-access` | auto / `/infra-access` | How to reach deployed staging/production resources — kubectl, port-forwarding to Postgres/Kafka, AWS CLI, `snow`. |
+| `powerstorm` | `/powerstorm` | Run a structured multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. |
 | `hello-world` | `hello world` | Minimal smoke test that confirms the plugin is installed. |
 
 `hello-world` and `infra-access` are model-invocable — Claude pulls them in automatically when
 relevant. The rest set `disable-model-invocation: true`, so they only fire when you invoke them
 explicitly as a slash command.
+
+`powerstorm` ships a set of dedicated subagents under `agents/` (the `powerstorm-*` workers) that
+the skill dispatches by name through its phases.
 
 ## Adding a skill
 
