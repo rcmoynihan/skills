@@ -33,7 +33,7 @@ Adapt these to the actual proposal — drop the ones that don't apply, add the o
 Write the agenda to `initial-agenda.md` in the run directory, structured as a tree:
 
 - Lettered **concern areas** (`A`, `B`, `C`, …), each a one-line statement of what it covers.
-- Numbered **items** under each (`A1`, `A2`, …), one line each, phrased as the question to resolve. These IDs are stable handles the interview and the Facilitator refer to — assign them deliberately.
+- Numbered **items** under each, one line each, phrased as the question to resolve, with the **status token first** — the format the living agenda uses: `[unvisited] A1 <question>`. The IDs (`A1`, `A2`, …) are stable handles the interview and the Facilitator refer to — assign them deliberately.
 - Mark every item `[unvisited]`.
 
 Write the document as a clean description of the territory as it currently stands — no change narration, no notes about your process. When you finish, report the file path you wrote and a one-line summary of the agenda's shape (how many areas, roughly how many items, and which area looks richest).

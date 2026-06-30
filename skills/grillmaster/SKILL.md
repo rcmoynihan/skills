@@ -72,23 +72,32 @@ Each turn, in order:
 1. **Ask** the one next question, with your recommended answer. Wait for the user.
 2. **Log** — append one row to `conversation-path.md`: the active node, the `move`, a ≤12-word summary and implication, the `drift` read, and where you're headed next.
 3. **Update the map** — flip the active item's status if it resolved; add any new concern; rewrite the Position block (bump or reset `turns-since-node-change`, update `active` / `resume-target`).
-4. **Check the triggers** (cheap reasoning, no tool call — see below). If any fires, dispatch the Facilitator before asking the next question.
+4. **Check the triggers** (cheap reasoning, no tool call — see below). If a hard trigger is due, dispatch the Facilitator before asking the next question.
 
 ### Drift recovery
 
 - **`correct`** — re-answer the current node with the user's correction folded in. Stay on the node; don't pivot the whole interview around a single correction.
-- **`tangent` / `new-concern`** — if the concern is new, add it to the agenda (`reason added: …`). Set `resume-target` to the current node **only if it isn't already an outstanding resume obligation** — record the *shallowest* unfinished node, so you always know the top of the thread to return to. Mark the node you're leaving `[paused]`, make the tangent `[active]`, and descend.
+- **`tangent` / `new-concern`** — if the concern is new, add it to the agenda (`reason added: …`). Set `resume-target` to the current node **only if it isn't already an outstanding resume obligation** — record the *shallowest* unfinished node, so you always know the top of the thread to return to. If `resume-target` is already set you're nesting: keep the shallow pointer (don't overwrite it) — nesting is a hard Facilitator trigger, and the Facilitator reconstructs the deeper return order from the log. Mark the node you're leaving `[paused]`, make the tangent `[active]`, and descend.
 - **On resolution** — mark the node `[resolved]` (or `[dropped]` with a reason). Climb back to `resume-target`; if none, take the next `[unvisited]` item in agenda order. Clear `resume-target` when you've returned to it.
 - Most tangents are *abandoned*, not resolved — the user wanders off and never closes them. You won't always notice; that's what the Facilitator is for.
 
 ### When to call the Facilitator
 
-Dispatch `grillmaster-facilitator` (run dir path only — it reads the files) when **any** holds:
+The Facilitator is your only un-drifted reader, so err toward calling it. The triggers split into hard ones (no judgment — dispatch) and soft ones.
 
-- **Mechanical (unconditional):** `turns-since-node-change ≥ 4`. This fires even when you feel productive — it's the guard against the drifting interviewer never noticing it's drifting.
-- **Judgment:** a `correct` or `tangent` move; a tangent that's run several turns; a branch that feels finished; genuine uncertainty about where to go next.
+**Hard triggers — always dispatch:**
 
-Treat its verdict as **binding**, not advisory: on a `drifting` verdict, make the climb-back visible to the user and act on it rather than continuing where you were. Record the dispatch in the Position block (`last-facilitator: turn N`).
+- **Same-node staleness:** `turns-since-node-change ≥ 4` — you've circled one node without resolving it.
+- **Cadence:** `≥ 4` turns since `last-facilitator` (count from the start if it never ran) — tighten to `≥ 3` if any turn since then was a `tangent`, `new-concern`, or `correct`. This is the one that fires when the active node changes *every* turn, which same-node staleness never catches.
+- **Nesting:** a new `tangent`/`new-concern` opens while `resume-target` is *already set* — you're now ≥2 deep, exactly where a single resume pointer loses the thread.
+- **Sticky tangent:** a tangent that has survived more than one user turn without resolving or being dropped.
+- **Deep drift:** you logged `drift: deep` this turn.
+
+**Soft heuristics — consider dispatching:** a branch that feels finished; genuine uncertainty about where to go next; a run of `correct` moves on one node.
+
+**When it's fine to skip — and only then:** `resume-target` is empty **and** the tangent closed within one turn **and** drift was `none`/`watch` **and** no hard trigger is due. "I handled it correctly inline" is **not** a skip condition — a drifting interviewer feels in control, which is the whole reason the un-drifted reader exists.
+
+Dispatch `grillmaster-facilitator` with the run dir path only (it reads the files). Treat its verdict as **binding**: on a `drifting` verdict, make the climb-back visible to the user and act on it rather than continuing where you were. After it returns, **persist its pass** — append a `meta` row to the log (its drift verdict + recommended climb-back target in the `summary`/`implication` columns) and set `last-facilitator: turn N` in the Position block. The `meta` row is what keeps the independent read alive across a compaction — `last-facilitator` alone records only that it ran, not what it found.
 
 ## Completion
 
@@ -134,4 +143,7 @@ Finally, **offer** — don't auto-run — to turn the findings into a concrete a
 | turn | active-node | move | summary | implication | drift | next-node |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | A1 | answer | <≤12 words> | <≤12 words> | none | A2 |
+| 4 | C2 | meta | facilitator: drifting, 3 areas untouched | climb back to A4; close C2 | deep | A4 |
 ```
+
+A `meta` row records a Facilitator pass: its verdict in `summary`, the climb-back target / items to close in `implication`, its drift read in `drift`.
