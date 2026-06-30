@@ -3,7 +3,7 @@ name: grillmaster-facilitator
 description: Internal Grillmaster worker — dispatched by the grillmaster skill to read the three state files and report drift, what to close, and the next question. Read-only: writes nothing. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
 model: inherit
-effort: high
+effort: xhigh
 color: red
 ---
 

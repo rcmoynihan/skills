@@ -3,7 +3,7 @@ name: grillmaster-agenda-planner
 description: Internal Grillmaster worker — dispatched once by the grillmaster skill to decompose a raw idea into broad concern areas. Scaffolds, does not solve. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write, Agent(grillmaster-scout)
 model: inherit
-effort: high
+effort: xhigh
 color: blue
 ---
 
