@@ -3,7 +3,7 @@ name: powerstorm-slice-lead
 description: Internal Powerstorm worker — dispatched once per slice by the Powerstorm skill to frame, draft, and review one specification slice. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit, Agent(powerstorm-slice-drafter, powerstorm-slice-reviewer, powerstorm-slice-thinker)
 model: inherit
-effort: medium
+effort: high
 color: purple
 ---
 

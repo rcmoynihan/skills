@@ -3,7 +3,7 @@ name: powerstorm-deep-dive-mapper
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to plan how the chosen direction gets specified. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write
 model: inherit
-effort: high
+effort: xhigh
 color: purple
 ---
 

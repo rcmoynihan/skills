@@ -3,7 +3,7 @@ name: powerstorm-brainstorm-lead
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to run the parallel idea generation phase and compile the solution profiles. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Agent(powerstorm-simplifier, powerstorm-pragmatist, powerstorm-elaborator)
 model: inherit
-effort: high
+effort: xhigh
 color: purple
 ---
 

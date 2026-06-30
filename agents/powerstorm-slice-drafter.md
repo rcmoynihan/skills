@@ -3,7 +3,7 @@ name: powerstorm-slice-drafter
 description: Internal Powerstorm worker — dispatched only by the Powerstorm Slice Lead to write one specification slice into its target document. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write, Edit
 model: inherit
-effort: high
+effort: xhigh
 color: cyan
 ---
 

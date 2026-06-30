@@ -3,7 +3,7 @@ name: powerstorm-cartographer
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to decompose a problem into a solution-validation checklist. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write
 model: inherit
-effort: high
+effort: xhigh
 color: blue
 ---
 

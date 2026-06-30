@@ -3,7 +3,7 @@ name: powerstorm-invariant-auditor
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to adversarially audit an artifact against the locked invariants. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
 model: inherit
-effort: high
+effort: xhigh
 color: red
 ---
 

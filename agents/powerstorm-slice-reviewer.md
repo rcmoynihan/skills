@@ -3,7 +3,7 @@ name: powerstorm-slice-reviewer
 description: Internal Powerstorm worker — dispatched only by the Powerstorm Slice Lead to give focused, independent review of one drafted slice. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
 model: inherit
-effort: high
+effort: xhigh
 color: orange
 ---
 

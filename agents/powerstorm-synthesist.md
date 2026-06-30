@@ -3,7 +3,7 @@ name: powerstorm-synthesist
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to consolidate approved artifacts into the spec brief or the implementation plan. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
-effort: high
+effort: xhigh
 color: pink
 ---
 

@@ -3,7 +3,7 @@ name: powerstorm-prototyper
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to build a disposable mock/PoC artifact that validates the chosen direction. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, WebSearch
 model: inherit
-effort: high
+effort: xhigh
 color: magenta
 ---
 

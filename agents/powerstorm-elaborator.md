@@ -3,7 +3,7 @@ name: powerstorm-elaborator
 description: Internal Powerstorm worker — dispatched only by the Powerstorm Brainstorm Lead to generate the most thorough, ambitious solution. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 model: inherit
-effort: high
+effort: xhigh
 color: green
 ---
 

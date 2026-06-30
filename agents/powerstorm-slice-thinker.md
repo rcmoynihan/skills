@@ -3,7 +3,7 @@ name: powerstorm-slice-thinker
 description: Internal Powerstorm worker — dispatched only by the Powerstorm Slice Lead, and only when a slice has a genuinely hard, novel core (a new algorithm, an orchestration pattern, optimization under heavy constraints, a non-obvious protocol or data structure) to reason through before drafting. Optional. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write, Edit
 model: inherit
-effort: high
+effort: xhigh
 color: green
 ---
 

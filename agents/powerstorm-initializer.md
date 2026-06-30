@@ -3,7 +3,7 @@ name: powerstorm-initializer
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to orient a brainstorm before decomposition. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 model: inherit
-effort: high
+effort: xhigh
 color: blue
 ---
 

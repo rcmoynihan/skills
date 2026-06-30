@@ -3,7 +3,7 @@ name: powerstorm-spec-integrator
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to assemble the final spec set and find cross-document contradictions. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
-effort: high
+effort: xhigh
 color: cyan
 ---
 
