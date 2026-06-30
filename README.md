@@ -24,17 +24,20 @@ them in the manifest.
 | `drive-claude-code` | `/drive-claude-code` | Delegate coding tasks to the Claude Code CLI from the shell. |
 | `drive-codex` | `/drive-codex` | Delegate coding tasks to the OpenAI Codex CLI (`codex exec`). |
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
-| `vulnerability-scan` | `/vulnerability-scan` | Scan the org's GitHub repos for exposure to a given CVE/advisory. |
-| `infra-access` | auto / `/infra-access` | How to reach deployed staging/production resources — kubectl, port-forwarding to Postgres/Kafka, AWS CLI, `snow`. |
 | `powerstorm` | `/powerstorm` | Run a structured multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. |
+| `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the system temp dir. |
+| `post-review-comments` | `/post-review-comments` | Post a finished code-review report's findings to the PR — strongly inline, top-level only for a genuine cross-cutting concern, never a summary. |
+| `review-and-comment` | `/review-and-comment` | Run `code-review` then `post-review-comments` back-to-back, hands-off — review a branch/PR and post the findings with no report review in between. |
 | `hello-world` | `hello world` | Minimal smoke test that confirms the plugin is installed. |
 
-`hello-world` and `infra-access` are model-invocable — Claude pulls them in automatically when
-relevant. The rest set `disable-model-invocation: true`, so they only fire when you invoke them
-explicitly as a slash command.
+`hello-world` is model-invocable — Claude pulls it in automatically when relevant. The rest set
+`disable-model-invocation: true`, so they only fire when you invoke them explicitly as a slash
+command.
 
 `powerstorm` ships a set of dedicated subagents under `agents/` (the `powerstorm-*` workers) that
-the skill dispatches by name through its phases.
+the skill dispatches by name through its phases. `code-review` ships the `code-review-*` agents the
+same way: the skill spawns `code-review-lead`, which spawns the reviewer-persona workers as its own
+children.
 
 ## Adding a skill
 
