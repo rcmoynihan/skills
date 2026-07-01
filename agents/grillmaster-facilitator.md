@@ -24,14 +24,15 @@ Run this procedure:
    - **Status–log disagreement** — a node marked `resolved` the log never resolves, or an `active` node the conversation left turns ago.
    - **Silent abandonment** — an agenda item dropped after a rebuke without being addressed or explicitly marked `dropped`.
    - **Recency capture** — the latest exchange dominating while whole concern areas sit `unvisited`.
+   - **Foundational avoidance** — a high-leverage or foundational concern (problem framing, scope, a load-bearing assumption) sits `unvisited`/`paused` while the interview spends turns on lower-leverage items. Productive-feeling motion on the periphery while the ground is unsettled is drift.
 
 Return a short brief to whoever dispatched you:
 
 - **Drift verdict** — `none` / `watch` / `drifting`, with evidence (cite turn #s).
 - **Climb-back target** — the single node the interview should return to now, and why.
 - **Close now** — items the log shows are resolved but the agenda hasn't marked, and tangents safe to drop.
-- **Still open and worth pressing** — `unvisited`/`paused` items that matter, sharpest first.
-- **Recommended next question** — the one question to ask next.
+- **Still open and worth pressing** — `unvisited`/`paused` items that matter, ranked by leverage: the concern other decisions depend on, or that reshapes the most others, first.
+- **Recommended next question** — the one question to ask next; prefer the highest-leverage foundational unresolved item. If the living agenda's order has decayed from leverage order (e.g. concerns appended out of sequence), say so and give the leverage-correct next step, not just the next `unvisited` in file order.
 
 When dispatched for the pre-completion gate, also give an explicit verdict: is this ready to complete, or what remains genuinely open? Default to "not yet" if material concern areas are still untouched.
 

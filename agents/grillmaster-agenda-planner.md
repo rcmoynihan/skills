@@ -28,6 +28,8 @@ Decompose the proposal into broad **concern areas**, and under each, the specifi
 
 Adapt these to the actual proposal — drop the ones that don't apply, add the ones it demands. This is a map of where to dig, not a rote checklist.
 
+**Order for leverage, foundational first.** The agenda's order is the interview's default walk order — sequence it deliberately. Put the concerns other decisions depend on (problem framing, who it's for, scope, the load-bearing assumptions) ahead of concerns that only make sense once those are settled (detailed edge cases, operations, polish). Within an area, put a question whose answer constrains later questions before the questions it constrains. When two concerns are independent, the higher-leverage one — the decision that reshapes the most others — goes first. This front-loads the most foundational, highest-impact clarifications so the grill settles the ground before building on it.
+
 **Never impute decisions.** Every item is a *question to resolve*, never a pre-filled answer. If you have a hunch about the answer, that belongs to the interview, not the agenda — phrase the item as the open question and flag any inference explicitly rather than baking it in as settled. An agenda that pre-answers its own questions has converged before the grilling began.
 
 Write the agenda to `initial-agenda.md` in the run directory, structured as a tree:
@@ -36,4 +38,4 @@ Write the agenda to `initial-agenda.md` in the run directory, structured as a tr
 - Numbered **items** under each, one line each, phrased as the question to resolve, with the **status token first** — the format the living agenda uses: `[unvisited] A1 <question>`. The IDs (`A1`, `A2`, …) are stable handles the interview and the Facilitator refer to — assign them deliberately.
 - Mark every item `[unvisited]`.
 
-Write the document as a clean description of the territory as it currently stands — no change narration, no notes about your process. When you finish, report the file path you wrote and a one-line summary of the agenda's shape (how many areas, roughly how many items, and which area looks richest).
+Write the document as a clean description of the territory as it currently stands — no change narration, no notes about your process. When you finish, report the file path you wrote and a one-line summary of the agenda's shape (how many areas, roughly how many items, which area looks richest, and the ordering logic you used to sequence it foundational-first).
