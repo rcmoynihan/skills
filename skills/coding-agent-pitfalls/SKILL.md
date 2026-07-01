@@ -15,31 +15,32 @@ This skill catalogs those failure modes in six families, each with concrete exam
 
 | # | Pitfall | Family |
 | --- | --- | --- |
-| 1 | Goal Drift | Solve the real problem |
-| 2 | Unnecessary Changes | Do only what was asked |
-| 3 | Complexity Inflation / Overengineering | Keep it as simple as the problem |
-| 4 | Fixing the Wrong Problem | Solve the real problem |
-| 5 | Scope Creep | Do only what was asked |
-| 6 | Refactoring While Implementing | Do only what was asked |
-| 7 | Premature Generalization | Keep it as simple as the problem |
-| 8 | Assumption-Driven Development | Ground yourself before acting |
-| 9 | Gold Plating | Do only what was asked |
-| 10 | Ignoring Existing Patterns | Respect the codebase you're in |
-| 11 | Rewriting Instead of Integrating | Do only what was asked |
+| 1 | Unnecessary Changes | Do only what was asked |
+| 2 | Scope Creep | Do only what was asked |
+| 3 | Refactoring While Implementing | Do only what was asked |
+| 4 | Gold Plating | Do only what was asked |
+| 5 | Diff Maximization | Do only what was asked |
+| 6 | Minimal-Change Failure | Do only what was asked |
+| 7 | Rewriting Instead of Integrating | Do only what was asked |
+| 8 | Acting on Partial Understanding | Ground yourself before acting |
+| 9 | Stale Plan Anchoring | Ground yourself before acting |
+| 10 | Hallucinated Context | Ground yourself before acting |
+| 11 | Assumption-Driven Development | Ground yourself before acting |
 | 12 | Solving Uncertainty with Code | Ground yourself before acting |
-| 13 | Local Optimization, Global Degradation | Respect the codebase you're in |
-| 14 | Cargo-Cult Engineering | Keep it as simple as the problem |
-| 15 | Breaking Invariants | Respect the codebase you're in |
-| 16 | Symptom Treatment | Solve the real problem |
-| 17 | Acting on Partial Understanding | Ground yourself before acting |
-| 18 | Diff Maximization | Do only what was asked |
-| 19 | Insufficient Validation | Verify, then stop deliberately |
-| 20 | Hallucinated Context | Ground yourself before acting |
-| 21 | Tool Misuse | Ground yourself before acting |
-| 22 | Tunnel Vision | Ground yourself before acting |
-| 23 | Constraint Neglect | Solve the real problem |
-| 24 | Minimal-Change Failure | Do only what was asked |
-| 25 | Over-eager Convergence | Verify, then stop deliberately |
+| 13 | Tunnel Vision | Ground yourself before acting |
+| 14 | Tool Misuse | Ground yourself before acting |
+| 15 | Complexity Inflation / Overengineering | Keep it as simple as the problem |
+| 16 | Premature Generalization | Keep it as simple as the problem |
+| 17 | Cargo-Cult Engineering | Keep it as simple as the problem |
+| 18 | Goal Drift | Solve the real problem |
+| 19 | Fixing the Wrong Problem | Solve the real problem |
+| 20 | Symptom Treatment | Solve the real problem |
+| 21 | Constraint Neglect | Solve the real problem |
+| 22 | Insufficient Validation | Verify, then stop deliberately |
+| 23 | Over-eager Convergence | Verify, then stop deliberately |
+| 24 | Ignoring Existing Patterns | Respect the codebase you're in |
+| 25 | Breaking Invariants | Respect the codebase you're in |
+| 26 | Local Optimization, Global Degradation | Respect the codebase you're in |
 
 ## Do only what was asked
 
@@ -90,6 +91,56 @@ You replace working code with a fresh implementation rather than making the smal
 - Is there a smaller edit that fully solves this? Have I confirmed the narrow fix is actually insufficient before going bigger?
 - Am I rewriting working code when I could extend it in place?
 - Do I have an improvement in mind that the user didn't ask for? Suggest it; don't silently build it.
+
+## Ground yourself before acting
+
+Most bad changes trace back to acting before you actually understand the code, the requirement, or the tool in front of you. Slow down at the input stage: read enough, confirm what's real and current, and ask when it matters.
+
+Pitfalls: Acting on Partial Understanding · Stale Plan Anchoring · Hallucinated Context · Assumption-Driven Development · Solving Uncertainty with Code · Tunnel Vision · Tool Misuse
+
+### Acting on Partial Understanding
+You read one file or the first match and start editing as if you've seen the whole picture.
+**Looks like:** You grep for `parseConfig`, find it in `config.ts`, and rewrite it — missing that `config.legacy.ts` re-exports a second implementation that most callers actually use, and that a subclass overrides the method you touched.
+**Avoid it:** Trace the full path before editing: all definitions, all call sites, tests, and who depends on the behavior. Read the whole function and its neighbors, not just the matched line. When the surface is broad, dispatch a search agent to map it first.
+
+### Stale Plan Anchoring
+You keep building against a plan, decision, or framing the conversation has already moved past — the original was stated early and stuck, while the change that superseded it came mid-thread and didn't fully land.
+**Looks like:** Early on you settle on storing sessions in Redis. Ten messages later the user says "actually, no new infra — use a signed cookie." You switch the store, but the code still constructs a Redis client and your plan still lists "add Redis to docker-compose." Or the supersession is *implicit*: the team drops feature X and you correctly stop building X — but step 4 of your plan, "wire the X toggle into settings," only existed to serve X, and you build it anyway. You honored the change stated out loud and missed everything downstream that silently depended on it. LLMs anchor hard on early context — the first framing becomes the reference point for everything after — and a mid-conversation reversal lands in the low-attention middle, so the retired plan often outweighs the correction that killed it.
+**Avoid it:** Treat a changed decision as a diff to propagate, not a one-line patch. Re-read the *current* state of the thread rather than your memory of the plan from ten turns ago, and ask what else rested on the thing that just changed — which plan steps, which code, which assumptions only made sense under the old decision — then retire those in the same pass. When you can't tell whether an earlier idea is still live, say what you believe is current and confirm ("dropping the Redis work now that we're on cookies — right?") instead of quietly carrying it forward. This isn't Tunnel Vision, where you push your own theory past the evidence; here the evidence is the user's own change, and the failure is not following it to its conclusions.
+
+### Hallucinated Context
+You invent files, config keys, APIs, function signatures, or "the way this project does things" that don't exist. This is one of the best-documented coding-agent failures — an agent will confidently emit plausible imports, argument names, or flags borrowed from a different library or version.
+**Looks like:** You write `client.chat.completions.create(...)` for a codebase using the Anthropic SDK, or call `df.pivot_table(dropna_groups=True)` with a kwarg that doesn't exist, or reference `src/utils/dates.ts` you never confirmed is there. Roughly a fifth of LLM-generated package references are fabricated.
+**Avoid it:** Verify before you rely on it. Open the file, read the installed package's actual signature (`node_modules`, site-packages, or `--help`), and check the lockfile for the version. If you haven't seen it this session, don't assume it exists — never invent a plausible import path; resolve it.
+
+### Assumption-Driven Development
+You guess what an unclear requirement means, then build the guess as though it were confirmed.
+**Looks like:** Ticket says "add rate limiting to the API." You silently pick 100 req/min, per-IP, in-memory, and ship a full middleware — when the team needed per-API-key limits backed by Redis. Codex tends to charge ahead on inferred assumptions like this; the failure is treating the inference as settled.
+**Avoid it:** Name the ambiguity out loud. If a guess is cheap to reverse, state the assumption and proceed ("assuming offset pagination, page size 20 — say if you want cursor-based"). If it shapes the design or is expensive to undo, ask before building. Don't bury a consequential decision inside an implementation.
+
+### Solving Uncertainty with Code
+Faced with ambiguity, you write more code — abstractions, config flags, "handle both cases" branches — instead of resolving the question.
+**Looks like:** Unsure whether input arrives as a string or an array, so you add a normalizer that coerces both, plus a feature flag, plus a fallback path — a maze built to avoid asking "which is it?"
+**Avoid it:** Treat a clarifying question as cheaper than speculative generality. Resolve the unknown, then write the one path you actually need. Flexibility you added to dodge a decision is complexity you'll maintain forever.
+
+### Tunnel Vision
+You commit to one theory of the bug or one implementation path and keep pushing it as contradicting evidence piles up.
+**Looks like:** You're sure the flaky test is a race condition, so you sprinkle in `await`s and retries. The logs already show a hardcoded fixture date that expired — but you keep patching timing because that was your first idea. Agents fall into this in debugging loops, repeating variations of a failing fix instead of stepping back.
+**Avoid it:** When two or three attempts on the same theory fail, stop and re-derive from the evidence. Re-read the actual error. Ask what would prove you wrong and check that first; treat disconfirming evidence as decisive, not as noise to explain away.
+
+### Tool Misuse
+You reach for the wrong tool or wrong source of truth, doing extra work or drawing a false conclusion.
+**Looks like:** Reading a 4,000-line file with `Read` offsets instead of searching it; using `cat`/`grep` in Bash where a dedicated search tool is faster and cleaner; trusting a stale README over the running code; or asking git log "what does this do now" instead of reading the current source. Codex, running in a sandbox, may conclude a network-dependent step "fails" when the real issue is a disabled network, not the code.
+**Avoid it:** Match the tool to the job — search tools to locate, Read to study a known file, execution to confirm behavior. Prefer the code and live output as ground truth over prose about the code. When a tool gives a surprising result, question whether you're using it correctly before trusting the result.
+
+### Catching yourself
+- Am I about to edit something I've only partially read? Have I found all callers?
+- Does my plan still match the latest turn, or a version the conversation has moved past? When a decision changed, did I trace and retire everything that depended on it?
+- Have I actually seen this file / API / signature this session, or am I assuming it exists?
+- Is there an unconfirmed requirement I'm quietly deciding for the user?
+- Am I adding code (flags, branches, abstractions) to avoid asking a question?
+- How many times have I retried the same theory? What evidence am I explaining away?
+- Is this the right tool, and is my source of truth the actual code or just prose about it?
 
 ## Keep it as simple as the problem
 
@@ -154,49 +205,29 @@ You ignore explicit boundaries — style guides, perf budgets, compatibility tar
 - What explicit constraints was I given, and does this change respect every one of them?
 - Am I doing work nobody asked for because it's nearby and tempting?
 
-## Ground yourself before acting
+## Verify, then stop deliberately
 
-Most bad changes trace back to acting before you actually understand the code, the requirement, or the tool in front of you. Slow down at the input stage: read enough, confirm what's real, and ask when it matters.
+Two opposite failure modes bracket the end of a task: stopping before you've confirmed the work is correct, and never stopping — locking onto the first idea or declaring "done" while branches of the spec go unaddressed. The fix for both is a deliberate close: verify against the actual requirement, then check that nothing remains.
 
-Pitfalls: Acting on Partial Understanding · Hallucinated Context · Assumption-Driven Development · Solving Uncertainty with Code · Tunnel Vision · Tool Misuse
+Pitfalls: Insufficient Validation · Over-eager Convergence
 
-### Acting on Partial Understanding
-You read one file or the first match and start editing as if you've seen the whole picture.
-**Looks like:** You grep for `parseConfig`, find it in `config.ts`, and rewrite it — missing that `config.legacy.ts` re-exports a second implementation that most callers actually use, and that a subclass overrides the method you touched.
-**Avoid it:** Trace the full path before editing: all definitions, all call sites, tests, and who depends on the behavior. Read the whole function and its neighbors, not just the matched line. When the surface is broad, dispatch a search agent to map it first.
+### Insufficient Validation
+You edit code and report success without running it — no build, no tests, no reproduction of the original bug — so "fixed" means "looks right," not "works."
+**Looks like:** You patch a null-check, write "Fixed the crash," and commit. You never reran the failing input, so you don't notice the crash now happens one line later. Or you add a function and move on without running the test suite, breaking three call sites you didn't grep for. Claude Code has a documented tendency to say "done" or "fixed" after a plausible edit without ever executing it against real data or rerunning the repro — the same bug then resurfaces on the next run.
+**Avoid it:** Before claiming anything works, actually run it. Reproduce the original failure *first* so you have a baseline, apply the fix, then confirm the failure is gone and the build/tests/linter/type-checker still pass. If you cannot run it, say so explicitly rather than implying you verified it.
 
-### Hallucinated Context
-You invent files, config keys, APIs, function signatures, or "the way this project does things" that don't exist. This is one of the best-documented coding-agent failures — an agent will confidently emit plausible imports, argument names, or flags borrowed from a different library or version.
-**Looks like:** You write `client.chat.completions.create(...)` for a codebase using the Anthropic SDK, or call `df.pivot_table(dropna_groups=True)` with a kwarg that doesn't exist, or reference `src/utils/dates.ts` you never confirmed is there. Roughly a fifth of LLM-generated package references are fabricated.
-**Avoid it:** Verify before you rely on it. Open the file, read the installed package's actual signature (`node_modules`, site-packages, or `--help`), and check the lockfile for the version. If you haven't seen it this session, don't assume it exists — never invent a plausible import path; resolve it.
-
-### Assumption-Driven Development
-You guess what an unclear requirement means, then build the guess as though it were confirmed.
-**Looks like:** Ticket says "add rate limiting to the API." You silently pick 100 req/min, per-IP, in-memory, and ship a full middleware — when the team needed per-API-key limits backed by Redis. Codex tends to charge ahead on inferred assumptions like this; the failure is treating the inference as settled.
-**Avoid it:** Name the ambiguity out loud. If a guess is cheap to reverse, state the assumption and proceed ("assuming offset pagination, page size 20 — say if you want cursor-based"). If it shapes the design or is expensive to undo, ask before building. Don't bury a consequential decision inside an implementation.
-
-### Solving Uncertainty with Code
-Faced with ambiguity, you write more code — abstractions, config flags, "handle both cases" branches — instead of resolving the question.
-**Looks like:** Unsure whether input arrives as a string or an array, so you add a normalizer that coerces both, plus a feature flag, plus a fallback path — a maze built to avoid asking "which is it?"
-**Avoid it:** Treat a clarifying question as cheaper than speculative generality. Resolve the unknown, then write the one path you actually need. Flexibility you added to dodge a decision is complexity you'll maintain forever.
-
-### Tunnel Vision
-You commit to one theory of the bug or one implementation path and keep pushing it as contradicting evidence piles up.
-**Looks like:** You're sure the flaky test is a race condition, so you sprinkle in `await`s and retries. The logs already show a hardcoded fixture date that expired — but you keep patching timing because that was your first idea. Agents fall into this in debugging loops, repeating variations of a failing fix instead of stepping back.
-**Avoid it:** When two or three attempts on the same theory fail, stop and re-derive from the evidence. Re-read the actual error. Ask what would prove you wrong and check that first; treat disconfirming evidence as decisive, not as noise to explain away.
-
-### Tool Misuse
-You reach for the wrong tool or wrong source of truth, doing extra work or drawing a false conclusion.
-**Looks like:** Reading a 4,000-line file with `Read` offsets instead of searching it; using `cat`/`grep` in Bash where a dedicated search tool is faster and cleaner; trusting a stale README over the running code; or asking git log "what does this do now" instead of reading the current source. Codex, running in a sandbox, may conclude a network-dependent step "fails" when the real issue is a disabled network, not the code.
-**Avoid it:** Match the tool to the job — search tools to locate, Read to study a known file, execution to confirm behavior. Prefer the code and live output as ground truth over prose about the code. When a tool gives a surprising result, question whether you're using it correctly before trusting the result.
+### Over-eager Convergence
+You commit to the first solution that comes to mind without weighing alternatives, and you declare the task complete while parts of the spec, plan, or todo list are still untouched.
+**Looks like:** A 10-item plan where you finish 5, write a summary as if all 10 are done, and stop — skipping the lint/type-check/PR-creation steps at the tail. Or a task with three requirements ("validate input, persist it, emit an event") where you implement persistence, and the polished summary quietly omits the other two. On the design side: grabbing the first data structure that fits instead of noticing a simpler one, because you converged before exploring. Claude Code characteristically stops mid-plan after partial completion and presents a confident summary that reads as finished.
+**Avoid it:** Before starting, briefly consider more than one approach when the choice is load-bearing. Before stopping, re-read the original request and your own plan/todo list item by item and confirm each is genuinely addressed — not just the ones you found easy. Treat unfinished items as blocking, not as footnotes to mention later.
 
 ### Catching yourself
-- Am I about to edit something I've only partially read? Have I found all callers?
-- Have I actually seen this file / API / signature this session, or am I assuming it exists?
-- Is there an unconfirmed requirement I'm quietly deciding for the user?
-- Am I adding code (flags, branches, abstractions) to avoid asking a question?
-- How many times have I retried the same theory? What evidence am I explaining away?
-- Is this the right tool, and is my source of truth the actual code or just prose about it?
+- Am I about to say "done" / "fixed" / "works" without having actually run it?
+- Did I reproduce the original bug before fixing, so I know the fix changed anything?
+- Did the build, tests, linter, and type-checker all pass — or am I assuming?
+- Did I re-read the full request and check every requirement, or just the parts I completed?
+- Is my summary describing what I *did* while quietly omitting what I skipped?
+- Did I pick the first approach reflexively, or was the choice actually considered?
 
 ## Respect the codebase you're in
 
@@ -226,27 +257,3 @@ You make one file cleaner, faster, or more clever while making the whole system 
 - Is my diff bigger than the task? Am I refactoring or renaming beyond what was asked?
 - Does my "improvement" add an operational or cognitive cost the team didn't have before?
 - If a teammate saw this diff with no context, would it read as obviously consistent with everything around it?
-
-## Verify, then stop deliberately
-
-Two opposite failure modes bracket the end of a task: stopping before you've confirmed the work is correct, and never stopping — locking onto the first idea or declaring "done" while branches of the spec go unaddressed. The fix for both is a deliberate close: verify against the actual requirement, then check that nothing remains.
-
-Pitfalls: Insufficient Validation · Over-eager Convergence
-
-### Insufficient Validation
-You edit code and report success without running it — no build, no tests, no reproduction of the original bug — so "fixed" means "looks right," not "works."
-**Looks like:** You patch a null-check, write "Fixed the crash," and commit. You never reran the failing input, so you don't notice the crash now happens one line later. Or you add a function and move on without running the test suite, breaking three call sites you didn't grep for. Claude Code has a documented tendency to say "done" or "fixed" after a plausible edit without ever executing it against real data or rerunning the repro — the same bug then resurfaces on the next run.
-**Avoid it:** Before claiming anything works, actually run it. Reproduce the original failure *first* so you have a baseline, apply the fix, then confirm the failure is gone and the build/tests/linter/type-checker still pass. If you cannot run it, say so explicitly rather than implying you verified it.
-
-### Over-eager Convergence
-You commit to the first solution that comes to mind without weighing alternatives, and you declare the task complete while parts of the spec, plan, or todo list are still untouched.
-**Looks like:** A 10-item plan where you finish 5, write a summary as if all 10 are done, and stop — skipping the lint/type-check/PR-creation steps at the tail. Or a task with three requirements ("validate input, persist it, emit an event") where you implement persistence, and the polished summary quietly omits the other two. On the design side: grabbing the first data structure that fits instead of noticing a simpler one, because you converged before exploring. Claude Code characteristically stops mid-plan after partial completion and presents a confident summary that reads as finished.
-**Avoid it:** Before starting, briefly consider more than one approach when the choice is load-bearing. Before stopping, re-read the original request and your own plan/todo list item by item and confirm each is genuinely addressed — not just the ones you found easy. Treat unfinished items as blocking, not as footnotes to mention later.
-
-### Catching yourself
-- Am I about to say "done" / "fixed" / "works" without having actually run it?
-- Did I reproduce the original bug before fixing, so I know the fix changed anything?
-- Did the build, tests, linter, and type-checker all pass — or am I assuming?
-- Did I re-read the full request and check every requirement, or just the parts I completed?
-- Is my summary describing what I *did* while quietly omitting what I skipped?
-- Did I pick the first approach reflexively, or was the choice actually considered?
