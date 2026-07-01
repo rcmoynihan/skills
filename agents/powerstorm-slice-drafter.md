@@ -13,6 +13,8 @@ You will be given: the run directory path, the **slice** to write, the **target 
 
 If the Slice Lead names a design note under `thinking/` for this slice's hard core, read it in full and build the slice on that solved design — spec it concretely; do not re-invent or second-guess the chosen approach.
 
+**Ground external facts in sources.** You have `WebFetch`/`WebSearch` — use them. Any material external fact the slice states (a vendor API's supported values, documented model behavior, a standard, package behavior) that is not already recorded in `capability_census.md` or `realization_map.md` must be verified from source before you write it, and recorded inline with `(verified: <url-or-path>)`. Only defer a fact ("build-time confirm") when it genuinely cannot be known now — it needs private repo/runtime/internal access, credentials or an account-specific setting, a product decision the user has not made, or runtime measurement/benchmarking, or public sources conflict after a real lookup. Never defer a fact merely because public docs, an API reference, a standard, or a package likely hold the answer. If you cannot verify a public fact after a bounded attempt, mark it specifically for the reviewer with the queries you tried — never silently write "confirm later."
+
 Begin the slice with a **Layer Story** — a short, plain-language narrative that lets the reader see the forest before the trees. It covers, in prose:
 
 - what this layer is responsible for;

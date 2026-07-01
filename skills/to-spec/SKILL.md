@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: Formalize a completed grillmaster session (or the current conversation) into a single PRD/spec markdown file in the system temp dir — invariants/non-negotiables enumerated first, then a blend of product framing (problem, solution, user stories) and a rigorous, testable spec (coded requirements, interfaces, acceptance criteria, validation). Synthesis only — no re-interview.
+description: Formalize a completed grillmaster session (or the current conversation) into a single product PRD/spec markdown file in the system temp dir — the *what*: invariants first, then product framing (problem, solution, user stories, scope) and a rigorous, testable statement of requirements, external-interface promises, acceptance criteria, and validation. Synthesis only — no re-interview. The technical *how* is its companion `/to-design` doc.
 argument-hint: "(optional) path to a grillmaster run dir; blank uses the most recent run + this conversation"
 disable-model-invocation: true
 ---
@@ -11,7 +11,13 @@ Turn everything a grilling settled — the decisions, clarifications, and constr
 
 **Synthesize, do not interview.** The grill already did the asking. Build the spec from what was actually decided and from the conversation — never re-open the interview, and never invent an answer the grill didn't reach. Where the grill left a concern unexplored, the spec says so; it does not fill the hole with a guess.
 
-The output is a single markdown file written to the system temp dir, blending product framing (problem, solution, user stories) with a rigorous, machine-readable spec (coded requirements, interfaces, acceptance criteria, validation) — and it **leads with the invariants**.
+The output is a single markdown file written to the system temp dir: product framing (problem, solution, user stories, scope) plus a rigorous, testable statement of *what* the system must do and be (coded requirements, external-interface promises, acceptance criteria, validation) — and it **leads with the invariants**. It is the *what*; the technical *how* is its companion `/to-design` doc.
+
+## The boundary: what stays here vs goes to the design doc
+
+`to-spec` owns the *what* — the product intent and the behavior a reader can observe. The technical *how* — architecture, data/state, interface realization, operations, deployment, technical decisions, and test seams — is the companion `/to-design` doc. The test for any piece of content: **would it change if we re-implemented the same product a different way?** No → it stays here. Yes → it belongs in the design doc, and this spec only references it.
+
+So behavioral acceptance criteria, the external-interface *promise*, NFR *targets*, and the invariants stay here — invariants as the source of truth, carried forward into the design doc by id. Their *realization* — schemas, mechanisms, seams, ADRs — lives in the design doc.
 
 ## How to run this
 
@@ -88,48 +94,44 @@ An extensive, numbered list. Each: `As an <actor>, I want <feature>, so that <be
 
 ## 5. Requirements & Constraints
 
-Explicit, testable statements. A constraint that restates an invariant references its id.
+Explicit, testable statements. A constraint that restates an invariant references its id. State NFR *targets* here (e.g. a latency or availability bound); the *mechanism* that meets them lives in the design doc.
 
 - **REQ-001**: <requirement>
 - **CON-001**: <constraint>  (e.g. "honors INV-001")
 - **GUD-001**: <guideline / recommendation>
 
-## 6. Interfaces & Data Contracts
+## 6. External Interfaces & Contracts
 
-APIs, CLI surfaces, events, data shapes, schemas — the *what*, not the *how*. Tables/code blocks for schemas.
+The interface *promise*, at the behavioral level: which operations / commands / events exist, what each one means, the inputs a consumer must supply and the outcomes it can rely on, and the *meaning* of errors. Wire schemas, field types, error codes, versioning mechanics, and idempotency detail are *realization* — they live in the design doc. Include a shape here only when it's a frozen contract external consumers integrate against.
 
 ## 7. Acceptance Criteria
 
-Testable, in Given-When-Then form, tied back to requirement ids.
+Testable, in Given-When-Then form, tied back to requirement ids. These behavioral promises are what the design doc's test strategy verifies against.
 
 - **AC-001**: Given <context>, when <action>, then <expected outcome>.  (REQ-001)
 
-## 8. Testing Strategy
+## 8. Key Decisions & Rationale
 
-What makes a good test here (assert external behavior, not implementation). The seam(s) to test at — prefer existing and the highest/fewest, ideally one. Test levels and any prior art to mirror.
+The product and scope decisions the grill produced and *why* — what to build, for whom, what to include or defer, interaction models. **Technical/architectural decisions** — a choice with a rejected technical alternative (storage, schema, technology, algorithm) — belong in the design doc as `DD-###` ADRs, not here.
 
-## 9. Key Decisions & Rationale
+## 9. Dependencies & External Integrations
 
-The decisions and clarifications the grill produced and *why* — architectural calls, schema/API choices, interaction models. Decision-encoding snippets only.
+External systems, services, platforms, data, and compliance needs — *what* is required, not specific package versions. The integration *design* (clients, pooling, failover) lives in the design doc.
 
-## 10. Dependencies & External Integrations
-
-External systems, services, platforms, data, and compliance needs. State *what* is required, not specific package versions.
-
-## 11. Open Questions & Unresolved Decisions
+## 10. Open Questions & Unresolved Decisions
 
 What the grill did not settle. Each tagged with its grill node id (e.g. `C2`, `F3`). Never answered here — these are the calls still owed. If this section is large, note near the top that the spec is **partial**.
 
-## 12. Out of Scope
+## 11. Out of Scope
 
 Explicit non-goals, including concerns the grill deliberately dropped.
 
-## 13. Validation Criteria
+## 12. Validation Criteria
 
-How to verify a built solution complies with this spec.
+How to verify a built solution meets this spec's *what* — the product-level, behavioral checks. Technical verification (test seams, load/chaos, readiness) lives in the design doc.
 
-## 14. Related / Further Reading
+## 13. Related / Further Reading
 
-Paths to the grill run artifacts (initial-agenda / living-agenda / conversation-path) and any other relevant docs.
+Paths to the grill run artifacts (initial-agenda / living-agenda / conversation-path), the companion `/to-design` doc once produced, and any other relevant docs.
 ```
 </spec-template>
