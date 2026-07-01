@@ -2,8 +2,10 @@
 name: post-review-comments
 description: Take a completed code-review markdown report (from the code-review skill) and post its findings to the PR as comments — strongly preferring inline comments anchored at each finding's file:line, with at most one top-level comment reserved for a genuine large cross-cutting concern. Never posts a summary or "here's the review" comment. Use when the user wants a finished review's findings posted to the PR.
 argument-hint: "path to the review .md (optional; defaults to the newest pr-*-review.md in the temp dir)"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
+
+*IMPORTANT:* This skill posts **real comments to the PR**. It is outward-facing, not a report to the user. Unless you have been assured by the user or a supervising agent that it is okay to run this skill, **do not run it** — it will post comments to the APR.
 
 # Post review comments
 

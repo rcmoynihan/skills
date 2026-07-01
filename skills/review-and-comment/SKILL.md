@@ -2,8 +2,10 @@
 name: review-and-comment
 description: Autonomously review a branch/PR and post the findings as PR comments end to end, with no human review of the report in between — runs code-review to produce the review report, then immediately runs post-review-comments to post the findings inline (top-level only for a genuine cross-cutting concern, never a summary). Use when the user wants a PR reviewed and commented fully hands-off.
 argument-hint: "blank for current branch/PR, or a PR number / URL / branch"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
+
+*IMPORTANT:* The post-review-comments skill posts **real comments to the PR**. It is outward-facing, not a report to the user. Unless you have been assured by the user or a supervising agent that it is okay to run this skill, **do not run it** — it will post comments to the PR.
 
 # Review and comment
 

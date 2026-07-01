@@ -2,7 +2,7 @@
 name: code-review
 description: Multi-persona code review of a branch or PR. Resolves the changes (current branch's PR, or a given PR / branch), spawns a review-lead subagent that runs always-on plus diff-warranted reviewer personas in parallel, and writes a single markdown review report to the system temp dir. Report-only — never edits, commits, pushes, or posts.
 argument-hint: "blank for current branch/PR, or a PR number / URL / branch"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Code review
