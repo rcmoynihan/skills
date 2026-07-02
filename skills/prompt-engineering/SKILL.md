@@ -76,6 +76,8 @@ Explain the purpose, the audience, and how the output will be used. "This goes i
 ### 3. Prefer positive instructions over negations
 Tell the model what **to do**, not just what to avoid. "Respond in flowing prose paragraphs" beats "Don't use bullet points." Negations are easy to violate and often draw attention to the very behavior you're suppressing — a classic failure is a prompt saying `DO NOT ASK FOR PERSONAL INFORMATION` that makes the model do exactly that. When a boundary is essential, pair it with the positive alternative: "For billing questions, direct the user to support@example.com" rather than only "Don't answer billing questions."
 
+**And spend a prohibition only where you predict the drift.** A model does what its positive instructions tell it; a "don't" earns its tokens only when the role would *plausibly* do the thing without it — coding agents over-reach their scope, reviewers manufacture findings, RAG answerers reach for outside knowledge, so those guardrails are signal. A rule forbidding behavior the agent has no reason or no lever to produce is noise that dilutes the instructions that matter. The usual source of that noise is **inheriting a spec's non-goals and negative invariants wholesale into a prompt** — copying system-level constraints ("no cost tracking," "never auto-merge," "don't touch module X") into every agent regardless of whether that agent could ever violate them. A non-goal belongs only where the agent holds the lever for it; elsewhere the invariant is already enforced by the agent's role, its tool grants, or another component, and restating it just buries the agent's actual job. Before adding a "never," ask: *given its positive instructions and its tools, would this agent plausibly do this?* Keep it where the answer is yes; cut the echoes.
+
 ### 4. Show examples (multishot)
 Examples are one of the most reliable ways to steer output format, tone, and structure — the model pattern-matches on demonstrated behavior. This is the highest-leverage lever after basic specificity.
 
@@ -163,6 +165,7 @@ Multiple agents coordinate, so prompts split by role. Since each agent is steere
 - **Self-contained and narrow.** The worker sees only what the lead passed it, not the full conversation. Its prompt must restate the objective, the output contract, and its scope — assume no shared context.
 - **Own tools, own stop criteria** — same single-agent discipline (tool docs, persistence, iteration cap), scoped to its one job, with least-privilege tool access.
 - **Return in a fixed, compact shape** the lead can consume mechanically — structured results, not verbose narration. The lead's context fills fast; summarize on the way back up.
+- **Inherit only the constraints this worker can act on.** Pass the objective, output contract, scope, and the boundaries this worker could actually cross — not the whole system's non-goals. Copying every spec invariant into each worker (a cost limit it can't measure, a merge policy it never runs, a sibling component it never calls) is noise that buries its real job; leave those to the agent that owns the lever (see §3).
 
 **Two hazards to design against — and a live disagreement:** (1) Cost. Single agents already use several times the tokens of a bare chat, and multi-agent systems roughly **15×** — plus latency and new coordination failure modes. (2) Context fragmentation. Anthropic's orchestrator-worker approach accepts that parallel workers each hold their own context (compression by parallelism); Cognition's "Don't build multi-agents" argues the opposite — that **workers acting on unshared context make conflicting implicit decisions** and produce incoherent results, so you should share full agent traces and often keep to a single continuous context. Both are right in their domain: parallel *read-mostly* work (research, review) tolerates isolation well; tightly *coupled* work (most coding) does not. Prompting can't rescue a decomposition that shouldn't have been split — exhaust a well-prompted single agent first, and see `agent-orchestration` for when the split is warranted.
 
@@ -185,7 +188,7 @@ You cannot eyeball a prompt to "good." Treat prompting as an experimental loop a
 - **Negation-heavy prompts.** A wall of "don'ts" with no "dos." State the desired behavior positively; a bare prohibition can even cue the behavior it forbids.
 - **Over-constraining / conflicting rules.** Piling on rules until they contradict, or restating the same rule five ways. Symptoms: the model ignores some rules (attention dilution), parrots your phrasing, or produces rigid, templated output. Fix with the cut test — cut *dead weight*, never *specificity*.
 - **Over-prompting / shouting.** All-caps, `MUST`/`CRITICAL`, threats, bribes, and "if in doubt, use X" hedges. On current models these *overtrigger* and degrade behavior. Use plain, specific phrasing.
-- **Untriggerable rules.** Rules for inputs that never occur. Dead weight; cut them.
+- **Untriggerable rules and inherited non-goals.** Rules for inputs that never occur, or prohibitions an agent has no lever to violate — often a spec's non-goals / negative invariants copied wholesale into every prompt. Dead weight that dilutes the real instructions; keep a "never" only where you predict the drift, and cut the echoes (see §3).
 - **Example pollution.** Wrong, off-distribution, or accidentally-patterned examples that teach the wrong thing.
 - **Lost in the middle.** Burying the key instruction or fact in the middle of a long context. Front-load it, move the query to the end, restate the critical instruction, and have the model quote relevant passages first.
 - **Instructions and data undelimited.** The model treats your data as instructions (or vice versa), and injection gets easier. Tag your sections.
@@ -204,6 +207,7 @@ Before shipping a prompt:
 - [ ] Length, tone, and structure are concrete (no "concise," "professional," "good")
 - [ ] At least one example — ideally 3–5, including a tricky case — matches the desired output format
 - [ ] Instructions are positive ("do X") rather than a pile of "don'ts"; no all-caps/`MUST` shouting
+- [ ] Every prohibition is one you predict the agent would otherwise violate — no inherited non-goals it has no lever to act on
 - [ ] Edge cases and missing-data behavior are specified
 - [ ] There's a sanctioned way to say "I don't know" / decline / flag uncertainty
 - [ ] Reasoning space is provided if the task needs analysis, and separated from the answer
