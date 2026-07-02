@@ -1,7 +1,7 @@
 ---
 name: powerstorm
-description: Run a structured, multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. Scaffolds input, orients and decomposes the problem, generates competing solutions, drives a slice-by-slice deep dive, and compiles an implementation plan — stopping for the user at every checkpoint.
-argument-hint: "<problem or motivation to brainstorm> (optional)"
+description: Run a structured, multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. Scaffolds input, orients and decomposes the problem, generates competing solutions, drives a slice-by-slice deep dive, and compiles an implementation plan — stopping for the user at every checkpoint (optionally running the slice phase unattended with `--yolo`).
+argument-hint: "<problem or motivation to brainstorm> (optional); append --yolo to auto-run the slice phase without per-slice approval"
 disable-model-invocation: true
 ---
 
@@ -15,7 +15,7 @@ The flow is: **scaffold input → orient → decompose → survey what already e
 
 - **Dispatch agents by name.** The plugin ships these workers: `powerstorm-initializer`, `powerstorm-cartographer`, `powerstorm-scout`, `powerstorm-brainstorm-lead`, `powerstorm-simplifier`, `powerstorm-pragmatist`, `powerstorm-elaborator`, `powerstorm-prototyper`, `powerstorm-deep-dive-mapper`, `powerstorm-slice-lead`, `powerstorm-slice-drafter`, `powerstorm-slice-reviewer`, `powerstorm-slice-thinker`, `powerstorm-spec-integrator`, `powerstorm-synthesist`, `powerstorm-invariant-auditor`. Dispatch them with the Agent tool (`subagent_type`). If `/agents` shows them under a plugin-scoped name, use that form. You dispatch only the top-level agents — the Brainstorm Lead spawns the three idea agents itself, and each Slice Lead spawns its own drafter and reviewer (and the optional Slice Thinker when a slice has a hard core).
 - **Subagents see none of this conversation.** Their only context is the prompt you send and the files they read. Every dispatch prompt must include the **run directory path** and a **manifest of the run files that already exist** — the run directory is the shared memory. Name the artifacts the agent must read as its primary handoff, and tell it to consult any other artifact in the manifest that bears on its task. State lives on disk, not in chat.
-- **Stop at every gate.** Each phase below ends with a **STOP** — present the artifact, ask the question, and wait for the user. Do not start the next phase until they respond.
+- **Stop at every gate.** Each phase below ends with a **STOP** — present the artifact, ask the question, and wait for the user. Do not start the next phase until they respond. The sole exception is **yolo mode**, which drops *only* the routine Phase 9 per-slice gate — never the escape hatch or any other gate (see **Yolo mode** below).
 - **No change narration, ever.** Every artifact — and every rewrite of one — describes the system as it currently is. On a revision loop, the agent overwrites its file so it reads as if written fresh: no before/after, no "updated to…", no process narration. Hold the subagents to this.
 - **Never impute decisions.** Whenever you scaffold or synthesize an artifact (the input, the spec brief, anything), fill it only from what the user actually said or what you verified from a source. Inferences go in a clearly-marked Assumptions block for confirmation — never baked into a field as if they were requirements. A brainstorm that starts from invented scope, constraints, or architecture has converged before it began. (Detailed for intake in Phase 1.)
 - **Check the world before building — but never let it cage the design.** Before solutions are generated, survey what already exists (Phase 4). Whether that survey may *shape* the design or only *route the realization afterward* depends on the invariants — that is the Phase 4 mode gate. Prior-art findings are **descriptive of what exists; they are never authority over an invariant**, and under a design-first invariant they never constrain what may be designed.
@@ -40,6 +40,20 @@ When the user reacts to any artifact — at a gate, or in free discussion about 
    - **Backward** — if the feedback contradicts a decision recorded *upstream* (late slice feedback that reveals the direction or the brief was wrong), the owner is that upstream artifact: reopen it, then re-derive the chain back down through every artifact that depended on it.
 4. **Re-derive, never hand-edit.** Dispatch the owning agent (or the Synthesist for the brief and the plan) to rewrite its file cleanly — per **Stay out of the documents** and **No change narration**. You do not edit artifacts yourself.
 5. **Verify when the change can propagate.** After feedback re-derives a doc that other docs depend on — `input.md` / Locked Invariants, `problem_landscape.md`, `spec-brief.md`, or `deep_dive_map.md` — dispatch a read-only check before advancing: `powerstorm-invariant-auditor` for posture/constraint compliance, and/or the `powerstorm-spec-integrator` contradiction hunt for consistency, scoped to the affected documents. On a TENSION / VIOLATED / contradiction finding, resolve it before continuing. Skip verification for a slice-local edit that nothing downstream has consumed yet — there is nothing for it to have broken.
+
+## Yolo mode (slice phase only)
+
+Yolo mode runs **Phase 9 and only Phase 9** unattended: the orchestrator drafts every slice the approved map defines, in order, without stopping for per-slice approval. It is opt-in — enabled by the `--yolo` flag at invocation, or by a mid-run directive during Phase 9 ("just run the rest of the slices"), and the user can revoke it mid-run to restore the per-slice gate. Yolo is orchestrator run-state, not artifact content: do not record it in `input.md` or any other file.
+
+What it changes, and what it does not:
+
+- **Only the routine per-slice STOP is removed.** Every other gate stands — most importantly Phase 8: the deep-dive map must be approved before yolo begins, because the map *is* the list of slices yolo runs. Phase 10 (integrate) and every earlier gate are unaffected.
+- **Per-slice quality is untouched.** Each slice still runs the Slice Lead's full drafter + independent-reviewer cycle for two rounds. Yolo removes the human approval *between* slices, never the automated review *within* one.
+- **The feedback protocol still binds.** Capture → classify → propagate → verify still applies to anything that surfaces; the only thing dropped is the routine approval pause.
+
+**Escape hatch — yolo still stops for a genuine blocker.** When a Slice Lead returns a *blocking* finding — an upstream contradiction (the slice reveals the direction, the brief, or the map was wrong), an invariant violation its two review rounds could not resolve, or a fact it flagged "needs user decision" — **STOP** and surface it, even in yolo. Route it per **Handling feedback** (if the owner is an upstream artifact, re-derive the chain back down), then **resume yolo automatically** for the remaining slices. A clean slice never stops.
+
+**Final roll-up.** After the last slice, present one consolidated summary — each slice's target `specs/` document path, a one-line Layer Story recap, and any blockers resolved or facts left open along the way — then proceed to the normal Phase 10 gate.
 
 ## Run directory
 
@@ -163,6 +177,8 @@ Iterate over the slices in the order the approved map defines. The iteration uni
 For each slice, dispatch a `powerstorm-slice-lead` with the run directory path, which slice it owns, and its target spec document. The Slice Lead frames the slice, then spawns its drafter and an independent reviewer, and returns the slice written into its document — beginning with a plain-language **Layer Story** (what this layer owns, how it behaves, what it depends on, what it hands off, the key design choice, and what it intentionally does not handle). When a slice has a hard novel core — a new algorithm, an orchestration pattern, optimization under heavy constraints — the Slice Lead may dispatch a `powerstorm-slice-thinker` to solve it before drafting (and reactively if the review shows the core is unsound); its design note under `thinking/` feeds the drafter, which writes the spec. The slice loop **resolves cheaply-searchable external facts by looking them up** — the drafter and reviewer are both web-enabled and record what they confirm with the `(verified: <url>)` convention — rather than deferring them; "build-time confirm" is reserved for information that genuinely cannot be known now (private/runtime access or a decision the user has not made), never a public doc or API reference nobody fetched.
 
 **STOP** after each slice. Surface the Layer Story first — it is the user's primary review aid — then the detail. The user approves the slice or gives corrections. Route corrections per **Handling feedback**: a correction scoped to this slice is folded into it; one that reveals an *upstream* decision was wrong — the direction, the brief, or the map — is routed to that owning artifact and the chain re-derived back down, not patched locally in the slice. Once approved, a slice is **binding context** for later slices unless a later contradiction forces explicitly reopening it.
+
+**In yolo mode**, do not stop for routine approval — continue to the next slice automatically, treating each clean slice as approved binding context. Still **STOP** for a genuine blocker per the escape hatch in **Yolo mode**, resume once it is resolved, and present the final roll-up after the last slice.
 
 ## Phase 10 — Integrate (Spec Integrator)
 
