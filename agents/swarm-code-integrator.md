@@ -15,7 +15,7 @@ You are used in both phases: Phase 2 (merging a wave's task branches) and Phase 
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the Phase-2 ownership matrix and wave gates are here; for a Phase-3 fix branch the ownership and gate arrive in the dispatch instead), `run-state.json`, `status/<task-id>.json` per task, `worktrees/<task-id>/`, and `logs/`.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the Phase-2 ownership matrix and wave gates are here; for a Phase-3 fix branch the ownership and gate arrive in the dispatch instead), `run-state.json`, `status/<task-id>.json` per task, `worktrees/<task-id>/`, and `logs/`.
 - **The repository root**, with the main tree on `swarm/<slug>`.
 - **The set of branches to merge this round** — each a verified `swarm/<slug>/<task-id>` sub-branch (Phase 2 concurrent work) or a fix branch (Phase 3) — in the dependency order to merge them. In Phase 2, each branch carries its owning task id so you look its `ownership` set up in the plan. In Phase 3, fix tasks are not entries in the plan, so the review-and-refine-lead supplies each fix branch's four-tier `ownership` block directly in the dispatch — you use that block for the veto instead of a plan lookup.
 - **The wave gate** — the `gate:` command list for this round. In Phase 2 it is quoted from the plan; in Phase 3 (fix re-merges) fix tasks are not entries in the plan's `waves:`, so the gate is supplied by the review-and-refine-lead in this dispatch rather than read from the plan.

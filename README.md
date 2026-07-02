@@ -17,6 +17,22 @@ skills/
 Skills under `skills/` and agents under `agents/` are auto-discovered — there's no need to list
 them in the manifest.
 
+## Where skills write artifacts
+
+Skills that produce artifacts — review reports, PR response plans, grillmaster / swarm-code /
+big-think run state, specs, and design docs — write them to a single dedicated dir under the OS
+temp dir:
+
+```
+${TMPDIR:-/tmp}/code-goblin-pro/
+```
+
+`${TMPDIR:-/tmp}` is the base (honoring a per-user `$TMPDIR` on macOS, falling back to `/tmp`); the
+`code-goblin-pro/` subdir namespaces every skill's files in one place, keyed by run (e.g.
+`grillmaster-<slug>/`, `swarm-code-<date>-<slug>/`, `pr-<ref>-review.md`). Any new skill that writes
+scratch or deliverable files uses this dir. The one deliberate exception is `powerstorm`, which keeps
+its per-run spec set in a repo-local, gitignored `.powerstorm/` beside the code.
+
 ## Skills
 
 | Skill | Invoke with | What it does |
@@ -25,7 +41,7 @@ them in the manifest.
 | `drive-codex` | `/drive-codex` | Delegate coding tasks to the OpenAI Codex CLI (`codex exec`). |
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
 | `powerstorm` | `/powerstorm` | Run a structured multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. |
-| `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the system temp dir. |
+| `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the plugin's temp dir. |
 | `post-review-comments` | `/post-review-comments` | Post a finished code-review report's findings to the PR — strongly inline, top-level only for a genuine cross-cutting concern, never a summary. |
 | `review-and-comment` | `/review-and-comment` | Run `code-review` then `post-review-comments` back-to-back, hands-off — review a branch/PR and post the findings with no report review in between. |
 | `hello-world` | `hello world` | Minimal smoke test that confirms the plugin is installed. |
@@ -65,7 +81,7 @@ Add this repo as a plugin marketplace and install it:
 
 ```
 /plugin marketplace add /Users/rmoynihan/misc/skills
-/plugin install rmoynihan-skills
+/plugin install code-goblin-pro
 ```
 
 Then verify it works by asking Claude to run the `hello-world` skill.

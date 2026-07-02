@@ -15,7 +15,7 @@ The main tree is already on `swarm/<slug>` (that branch *is* the reviewed code),
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the contract, including the verbatim `invariants:` block), `run-state.json` (with `original_branch` and `integration_branch`), `status/<task-id>.json` per task, the `code-review/` staging dir, and `logs/`.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the contract, including the verbatim `invariants:` block), `run-state.json` (with `original_branch` and `integration_branch`), `status/<task-id>.json` per task, the `code-review/` staging dir, and `logs/`.
 - **The repository root**, with the main tree on `swarm/<slug>`.
 
 Read `implementation-plan.md` and `run-state.json` first: you need `original_branch` and `swarm/<slug>` to compute the review base, and the plan's `invariants:` block to carry verbatim into any fix task.

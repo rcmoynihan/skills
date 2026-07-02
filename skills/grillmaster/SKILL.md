@@ -37,10 +37,10 @@ Posture is a **dial on depth, not on coverage.** It sets how hard you press each
 
 ## Run directory & resuming
 
-State lives in the system temp dir — an idea may be grilled with no repo in sight:
+State lives in a dedicated dir in the system temp dir — an idea may be grilled with no repo in sight:
 
 ```
-${TMPDIR:-/tmp}/grillmaster-<slug>/
+${TMPDIR:-/tmp}/code-goblin-pro/grillmaster-<slug>/
   initial-agenda.md      # frozen first map (Planner writes once)
   living-agenda.md       # the working map (you own it)
   conversation-path.md   # append-only turn log (you own it)
@@ -49,7 +49,7 @@ ${TMPDIR:-/tmp}/grillmaster-<slug>/
 `<slug>` derives from the idea. **Before starting a new run, check for an existing one** — a grill is long and will outlive a compaction:
 
 ```bash
-ls -dt "${TMPDIR:-/tmp}"/grillmaster-*/ 2>/dev/null
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grillmaster-*/ 2>/dev/null
 ```
 
 If a recent run dir matches the idea at hand, offer to resume it: read the three files, rebuild your position from the `living-agenda.md` Position block, and continue the interview. Otherwise create a fresh run dir.

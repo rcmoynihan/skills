@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: Formalize a completed grillmaster session (or the current conversation) into a single product PRD/spec markdown file in the system temp dir — the *what*: product framing (problem, solution, scope) and the governing invariants, followed by a rigorous, testable statement of user stories, requirements, external-interface promises, acceptance criteria, and validation. Synthesis only — no re-interview. The technical *how* is its companion `/to-design` doc.
+description: Formalize a completed grillmaster session (or the current conversation) into a single product PRD/spec markdown file in the plugin's temp dir — the *what*: product framing (problem, solution, scope) and the governing invariants, followed by a rigorous, testable statement of user stories, requirements, external-interface promises, acceptance criteria, and validation. Synthesis only — no re-interview. The technical *how* is its companion `/to-design` doc.
 argument-hint: "(optional) path to a grillmaster run dir; blank uses the most recent run + this conversation"
 disable-model-invocation: true
 ---
@@ -11,7 +11,7 @@ Turn everything a grilling settled — the decisions, clarifications, and constr
 
 **Synthesize, do not interview.** The grill already did the asking. Build the spec from what was actually decided and from the conversation — never re-open the interview, and never invent an answer the grill didn't reach. Where the grill left a concern unexplored, the spec says so; it does not fill the hole with a guess.
 
-The output is a single markdown file written to the system temp dir: product framing (problem, solution, scope) followed by the **governing invariants**, plus a rigorous, testable statement of *what* the system must do and be (user stories, coded requirements, external-interface promises, acceptance criteria, validation). It is the *what*; the technical *how* is its companion `/to-design` doc.
+The output is a single markdown file written to the plugin's temp dir: product framing (problem, solution, scope) followed by the **governing invariants**, plus a rigorous, testable statement of *what* the system must do and be (user stories, coded requirements, external-interface promises, acceptance criteria, validation). It is the *what*; the technical *how* is its companion `/to-design` doc.
 
 ## The boundary: what stays here vs goes to the design doc
 
@@ -30,10 +30,10 @@ So behavioral acceptance criteria, the external-interface *promise*, NFR *target
 
 ## Find the input
 
-A finished grill leaves its state in the system temp dir. Rediscover the most recent run:
+A finished grill leaves its state in the plugin's temp dir. Rediscover the most recent run:
 
 ```bash
-ls -dt "${TMPDIR:-/tmp}"/grillmaster-*/ 2>/dev/null
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grillmaster-*/ 2>/dev/null
 ```
 
 If the argument names a run dir, use that. If a recent run matches the topic at hand, read all three files — they are your primary source:
@@ -51,7 +51,7 @@ Also draw on this conversation. **Standalone fallback:** if no run dir matches, 
 3. **Route the grill's items:** `[resolved]` + the decision trail → the body sections; `[unvisited]`/`[paused]` → **Open Questions**; `[dropped]` → **Out of Scope**. Speak the grill's own vocabulary.
 4. **Draft the sections in order** (template below), each grounded in the artifacts/conversation and consistent with the invariants; drop the non-negotiables you extracted in step 2 into section 3. Fill what applies; a section with nothing gets a one-line `None.` — do not pad.
 5. **Consistency pass.** Re-read the invariants block and check the whole document against it: no requirement, user story, acceptance criterion, or decision may contradict an `INV-###`. Fix any that do before saving.
-6. **Save & report.** Write to `${TMPDIR:-/tmp}/spec-<slug>.md` (`<slug>` from the grill run name or the topic). Return the absolute path + a 1–2 line summary: topic, # invariants, # requirements, # open questions, and the word **partial** if material concern areas are still unresolved.
+6. **Save & report.** Write to `${TMPDIR:-/tmp}/code-goblin-pro/spec-<slug>.md` (`<slug>` from the grill run name or the topic). Return the absolute path + a 1–2 line summary: topic, # invariants, # requirements, # open questions, and the word **partial** if material concern areas are still unresolved.
 
 ## Spec template
 

@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Multi-persona code review of a branch or PR. Resolves the changes (current branch's PR, or a given PR / branch), spawns a review-lead subagent that runs always-on plus diff-warranted reviewer personas in parallel, and writes a single markdown review report to the system temp dir. Report-only — never edits, commits, pushes, or posts.
+description: Multi-persona code review of a branch or PR. Resolves the changes (current branch's PR, or a given PR / branch), spawns a review-lead subagent that runs always-on plus diff-warranted reviewer personas in parallel, and writes a single markdown review report to the plugin's temp dir. Report-only — never edits, commits, pushes, or posts.
 argument-hint: "blank for current branch/PR, or a PR number / URL / branch"
 disable-model-invocation: false
 ---
@@ -51,7 +51,7 @@ merge-base as `review_base`.
 So child prompts pass paths, not large inline blobs, write the resolved scope into a run dir:
 
 ```bash
-RUN_DIR="${TMPDIR:-/tmp}/code-review-<ref>"   # <ref> = PR number or sanitized branch name
+RUN_DIR="${TMPDIR:-/tmp}/code-goblin-pro/code-review-<ref>"   # <ref> = PR number or sanitized branch name
 mkdir -p "$RUN_DIR"
 ```
 
@@ -69,7 +69,7 @@ Spawn a single **`code-review-lead`** subagent (Agent tool) and pass it:
 - `contract_path` (the absolute findings-contract path)
 - `scope_mode` (`local` / `remote`), `head_ref` (when set), `review_base`
 - the PR number/title/body and whether it has prior review comments (empty for a bare branch)
-- `output_path` = `${TMPDIR:-/tmp}/pr-<ref>-review.md`
+- `output_path` = `${TMPDIR:-/tmp}/code-goblin-pro/pr-<ref>-review.md`
 
 The lead selects the panel, dispatches the reviewers in parallel, merges/dedups/gates their findings,
 self-verifies the P0/P1 findings, writes the report to `output_path`, and returns one line (path +

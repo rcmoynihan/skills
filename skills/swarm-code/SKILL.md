@@ -34,10 +34,10 @@ Every dispatch you issue is **self-contained**: the lead sees no conversation hi
 
 ## Run directory & resuming
 
-All run state lives under the system temp dir; **nothing is written to the repo tree except the `swarm/<slug>` branch.** Use `${TMPDIR:-/tmp}` in shell (the suite convention).
+All run state lives under a dedicated dir in the system temp dir; **nothing is written to the repo tree except the `swarm/<slug>` branch.** Use `${TMPDIR:-/tmp}/code-goblin-pro` in shell (the suite convention).
 
 ```
-${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/
+${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/
   run-state.json          # slug, integration_branch, original_branch, stash_ref, current_phase, current_wave
   scout-inventory.md      # the scout's factual codebase/prior-art brief (grounds the intake gate)
   ambiguity-register.md   # STOP output (empty/absent on PROCEED)
@@ -53,7 +53,7 @@ ${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/
 **Before starting a new run, check for an existing one** — a swarm run is long and will outlive a compaction:
 
 ```bash
-ls -dt "${TMPDIR:-/tmp}"/swarm-code-*/ 2>/dev/null
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/swarm-code-*/ 2>/dev/null
 ```
 
 If the invocation identifies an existing run — a run-dir path or `<slug>`, or an explicit resume request — **resume** it from the on-disk state; otherwise start a fresh run. This is not an interactive checkpoint: the plan-approval gate is the one place swarm-code pauses for the user, so resume is a routing decision you make from the invocation and the run-dir check, not a prompt you put to the user. Resume rebuilds position entirely from on-disk state — `run-state.json` (the current phase and wave), the per-task `status/<task-id>.json` checkpoints, and the `swarm/<slug>` branch itself (including the recorded auto-stash ref) — and continues from the **first incomplete wave**. Committed work is safe regardless of the run dir, because it lives on the durable branch; only the plan/status metadata is volatile, so resume is best-effort within a session. Do not re-plan or re-run completed waves; read their status and carry on.

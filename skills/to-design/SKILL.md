@@ -1,6 +1,6 @@
 ---
 name: to-design
-description: Turn a completed grillmaster session + its to-spec PRD into a single, complete technical design document in the system temp dir — the *how* that realizes the spec's *what*: architecture, data/state, interfaces, execution, cross-cutting concerns, deployment/rollout, technical decisions (ADRs), risks, verification, and readiness. Invariants first; synthesis only — no re-interview, no invented architecture.
+description: Turn a completed grillmaster session + its to-spec PRD into a single, complete technical design document in the plugin's temp dir — the *how* that realizes the spec's *what*: architecture, data/state, interfaces, execution, cross-cutting concerns, deployment/rollout, technical decisions (ADRs), risks, verification, and readiness. Invariants first; synthesis only — no re-interview, no invented architecture.
 argument-hint: "(optional) path to a spec file or a grillmaster run dir; blank uses the most recent spec + its grill run"
 disable-model-invocation: true
 ---
@@ -13,7 +13,7 @@ This is the second conversion step in the chain: **grillmaster** (grill → unde
 
 **Synthesize, do not interview.** The grill did the asking and the spec captured the *what*. Build the design from what was actually decided — never re-open the interview, and never invent architecture the grill didn't reach. A concern the grill left unexplored becomes an Open Question, not a guess.
 
-The output is a single markdown file in the system temp dir, and it **leads with the invariants**.
+The output is a single markdown file in the plugin's temp dir, and it **leads with the invariants**.
 
 **You are the orchestrator and the sole author.** You write the design in the main thread, then harden it with a small panel of read-only critics that edit nothing: an ad-hoc **Scout** for facts, and two opposing critics — an **Adversary** (*is it enough?*) and an **Auditor** (*is it faithful, and no more?*) — run over the draft in a two-round loop. The design doc, the spec, and the grill run are the shared state; there is no separate run directory.
 
@@ -52,8 +52,8 @@ The output is a single markdown file in the system temp dir, and it **leads with
 `to-design` reads **two** inputs: the finished spec and the grill run behind it.
 
 ```bash
-ls -dt "${TMPDIR:-/tmp}"/spec-*.md 2>/dev/null         # the to-spec PRDs
-ls -dt "${TMPDIR:-/tmp}"/grillmaster-*/ 2>/dev/null     # the grill runs
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/spec-*.md 2>/dev/null         # the to-spec PRDs
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grillmaster-*/ 2>/dev/null     # the grill runs
 ```
 
 - If the argument names a spec file or a grill run dir, use it. Otherwise take the most recent spec and its matching grill run (same `<slug>`).
@@ -73,7 +73,7 @@ Steps 1–5 are yours alone — you locate, frame, and draft. Steps 6–7 add th
 6. **Hardening round 1.** Dispatch `to-design-auditor` and `to-design-adversary` **in parallel** (one message), each with the dispatch contract. If either flags a hand-waved ADR, dispatch `to-design-alternatives` for that one `DD-`. Then revise the doc, triaging every finding by the rules below.
 7. **Hardening round 2.** Re-dispatch the same two critics on the **revised** doc — the independent check must see the hardened version, not the first draft — and revise again. Two rounds total. A finding that survives round 2 as VIOLATED or blocking is resolved or explicitly routed to §18/§16 before you finish.
 8. **Final pass.** Fill §21 traceability; delete or convert any design element that traces to nothing; confirm every component/contract/`DD-` still honors §0.
-9. **Save & report.** Write to `${TMPDIR:-/tmp}/design-<slug>.md` (same `<slug>` as the spec). Return the absolute path + the 1–2 line summary; say **partial** / **build-blocked** if load-bearing questions remain.
+9. **Save & report.** Write to `${TMPDIR:-/tmp}/code-goblin-pro/design-<slug>.md` (same `<slug>` as the spec). Return the absolute path + the 1–2 line summary; say **partial** / **build-blocked** if load-bearing questions remain.
 
 **Triaging a finding** (steps 6–7) — this is what keeps *hardened* compatible with *never invent*:
 

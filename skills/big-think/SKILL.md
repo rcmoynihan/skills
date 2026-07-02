@@ -32,10 +32,10 @@ It is diagnosis-first, software-first but general, and **standalone**: it ends a
 
 ## Run directory
 
-Create a per-run workspace in the current working directory:
+Create a per-run workspace in the plugin's temp dir:
 
 ```
-.bigthink/runs/<YYYY-MM-DD>-<slug>/
+${TMPDIR:-/tmp}/code-goblin-pro/bigthink-<YYYY-MM-DD>-<slug>/
   problem.md          # framed problem, scope/persona, Cynefin class, evidence ledger
   hypotheses.md       # competing cause hypotheses — scored, cross-linked, with evidence
   root-cause.md       # the locked cause + gate dossier   (OR investigation-plan.md if the gate fails)
@@ -43,7 +43,7 @@ Create a per-run workspace in the current working directory:
   decision-record.md  # the deliverable: recommended approach + tradeoffs (ADR-shaped)
 ```
 
-Name the run `<YYYY-MM-DD>-<slug>` — get the date with `date +%Y-%m-%d`, slug from the problem. If `.bigthink/` is inside a git repo, suggest adding it to `.gitignore` (it is per-run scratch, not source).
+Name the run `<YYYY-MM-DD>-<slug>` — get the date with `date +%Y-%m-%d`, slug from the problem.
 
 ## The diagnostic lens playbook
 

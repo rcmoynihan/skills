@@ -1,7 +1,7 @@
 ---
 name: post-review-comments
 description: Take a completed code-review markdown report (from the code-review skill) and post its findings to the PR as comments — strongly preferring inline comments anchored at each finding's file:line, with at most one top-level comment reserved for a genuine large cross-cutting concern. Never posts a summary or "here's the review" comment. Use when the user wants a finished review's findings posted to the PR.
-argument-hint: "path to the review .md (optional; defaults to the newest pr-*-review.md in the temp dir)"
+argument-hint: "path to the review .md (optional; defaults to the newest pr-*-review.md in the plugin's temp dir)"
 disable-model-invocation: false
 ---
 
@@ -22,10 +22,10 @@ then report what you posted.
 ## Step 1 — Load the review report
 
 Resolve the report file: use the path argument if given, otherwise the newest match of
-`"${TMPDIR:-/tmp}"/pr-*-review.md`:
+`"${TMPDIR:-/tmp}"/code-goblin-pro/pr-*-review.md`:
 
 ```bash
-ls -t "${TMPDIR:-/tmp}"/pr-*-review.md 2>/dev/null | head -1
+ls -t "${TMPDIR:-/tmp}"/code-goblin-pro/pr-*-review.md 2>/dev/null | head -1
 ```
 
 Read it and extract, for every finding in the severity tables (P0–P3): its stable `#`, **file**,

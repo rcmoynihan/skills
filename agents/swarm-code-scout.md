@@ -15,7 +15,7 @@ The plan-lead sends you out before the intake gate applies its under-specificati
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/` — the shared-memory root for the run.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — the shared-memory root for the run.
 - **The spec/design input** — the path to the settled spec (or the freetext), which names the concern the run implements.
 - **The repository root** and any paths, modules, or subsystems the spec points at.
 

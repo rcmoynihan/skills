@@ -1,8 +1,8 @@
 {
-  "name": "rmoynihan",
+  "name": "code-goblin-pro",
   "owner": {
     "name": "Riley Moynihan",
-    "email": "rmoynihan@crunchbase.com"
+    "email": "riley.c.moynihan@gmail.com"
   },
   "metadata": {
     "description": "Riley's personal collection of agent skills and resources.",
@@ -10,12 +10,12 @@
   },
   "plugins": [
     {
-      "name": "rmoynihan-skills",
+      "name": "code-goblin-pro",
       "description": "Riley's personal collection of agent skills and resources.",
       "version": "0.2.0",
       "author": {
         "name": "Riley Moynihan",
-        "email": "rmoynihan@crunchbase.com"
+        "email": "riley.c.moynihan@gmail.com"
       },
       "source": "."
     }

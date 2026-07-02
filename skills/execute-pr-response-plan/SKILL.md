@@ -1,7 +1,7 @@
 ---
 name: execute-pr-response-plan
 description: Execute a response plan produced by plan-pr-comment-responses — implement every comment's TODOs, run the project's tests/validation until green, have codex:rescue verify the work matches the plan with no scope creep, commit + push, drive PR CI to green, then post the drafted replies and resolve every thread except push-backs / significant divergences. Use when the user wants to carry out / apply / ship an already-written PR response plan.
-argument-hint: "path to the response-plan .md (optional; defaults to the newest pr-*-response-plan.md in the temp dir)"
+argument-hint: "path to the response-plan .md (optional; defaults to the newest pr-*-response-plan.md in the plugin's temp dir)"
 disable-model-invocation: true
 ---
 
@@ -26,10 +26,10 @@ PR.** It runs the whole pipeline **autonomously**, including the irreversible ou
 ## Step 1 — Load the plan
 
 Resolve the plan file: use the path argument if given, otherwise pick the newest match of
-`"${TMPDIR:-/tmp}"/pr-*-response-plan.md`:
+`"${TMPDIR:-/tmp}"/code-goblin-pro/pr-*-response-plan.md`:
 
 ```bash
-ls -t "${TMPDIR:-/tmp}"/pr-*-response-plan.md 2>/dev/null | head -1
+ls -t "${TMPDIR:-/tmp}"/code-goblin-pro/pr-*-response-plan.md 2>/dev/null | head -1
 ```
 
 Read it and extract:

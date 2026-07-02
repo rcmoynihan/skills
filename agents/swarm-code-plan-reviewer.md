@@ -25,7 +25,7 @@ Tests 1 and 2 you can settle by expanding globs and reading the plan against the
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/`.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/`.
 - **The plan path** — `implementation-plan.md` in the run dir — the DAG, waves, and four-tier ownership matrix you audit.
 - **The scout inventory path** — `scout-inventory.md` — the factual brief that names the codebase's shared/hub surfaces and coupling risks.
 - **The repository root**, so you can expand ownership globs against the real tree and read the code each task touches to build coupling scenarios.

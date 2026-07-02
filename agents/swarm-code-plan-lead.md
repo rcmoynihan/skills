@@ -15,7 +15,7 @@ You own Phase 1 of a swarm-code run: turning a settled spec into the single cont
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/` — the shared-memory root for the whole run.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — the shared-memory root for the whole run.
 - **The spec/design input** — the path to the settled spec (or the freetext) and its `<slug>`.
 - **The integration branch** — `swarm/<slug>` — and the run's posture.
 - **On a re-derivation:** the kickback context — either the user's corrections from the approval gate, or the integrator's semantic-conflict report (which tasks/ownership the merge exposed as wrong).

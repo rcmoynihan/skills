@@ -15,7 +15,7 @@ The main thread has already checked out `swarm/<slug>` in the main tree (off the
 
 Your dispatch prompt is self-contained and carries:
 
-- **The run-dir path** — `${TMPDIR:-/tmp}/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the approved contract), `run-state.json` (slug, `integration_branch`, `original_branch`, `stash_ref`, `current_phase`, `current_wave`), `status/<task-id>.json` (per-task checkpoints), `worktrees/` (created under concurrency), and `logs/`.
+- **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — and its manifest: `implementation-plan.md` (the approved contract), `run-state.json` (slug, `integration_branch`, `original_branch`, `stash_ref`, `current_phase`, `current_wave`), `status/<task-id>.json` (per-task checkpoints), `worktrees/` (created under concurrency), and `logs/`.
 - **The repository root**, with the main tree already on `swarm/<slug>`.
 
 Read `implementation-plan.md` in full first. It is immutable to you and to every task-lead — only the plan-lead re-derives it. Read `run-state.json` and any existing `status/<task-id>.json` files: if this is a resume, continue from the first incomplete wave using the on-disk state rather than restarting completed work.

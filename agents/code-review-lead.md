@@ -30,7 +30,7 @@ Your dispatch prompt carries:
   ref (for schema-drift and history checks).
 - `pr` — PR number/URL/title/body when reviewing a PR, plus whether it has prior review comments; empty
   for a bare-branch review.
-- `output_path` — where to write the report, e.g. `${TMPDIR}/pr-<ref>-review.md`.
+- `output_path` — where to write the report, e.g. `${TMPDIR:-/tmp}/code-goblin-pro/pr-<ref>-review.md`.
 
 ## Step 1 — Select the reviewer panel (agent judgment, not keyword match)
 
@@ -124,7 +124,7 @@ it is scoped to the highest-severity findings. There is no separate validator wa
 ## Step 5 — Write the report and return
 
 Write the markdown report to `output_path`. Then **return one line only**: the path + verdict + counts,
-e.g. `Ready with fixes: 2 P0, 3 P1, 5 P2 -> ${TMPDIR}/pr-1234-review.md`. Do not paste the report body
+e.g. `Ready with fixes: 2 P0, 3 P1, 5 P2 -> ${TMPDIR:-/tmp}/code-goblin-pro/pr-1234-review.md`. Do not paste the report body
 into your reply — the skill surfaces the file. Report-only: no Applied section, no commit, no PR post.
 
 ### Report structure (ASCII-safe; use `->` not arrows; no box-drawing or per-item rules)

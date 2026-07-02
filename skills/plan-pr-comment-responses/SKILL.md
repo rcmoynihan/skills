@@ -139,11 +139,11 @@ top-level comment; the only top-level message is the optional cross-cutting note
 
 ## Output
 
-Write the full report to a markdown file in the **OS system temp directory** — explicitly **not**
-the session scratchpad and **not** the workspace:
+Write the full report to a markdown file in the plugin's dir under the **OS system temp directory** —
+explicitly **not** the session scratchpad and **not** the workspace:
 
 ```
-"${TMPDIR:-/tmp}/pr-<ref>-response-plan.md"
+"${TMPDIR:-/tmp}/code-goblin-pro/pr-<ref>-response-plan.md"
 ```
 
 Derive `<ref>` from the PR (e.g. its number, or a sanitized branch name). Then return to the user
