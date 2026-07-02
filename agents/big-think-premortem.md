@@ -21,4 +21,4 @@ Enumerate distinct failure stories — aim for genuinely different modes, not va
 
 ## Return (to the orchestrator — write no files)
 
-A prioritized list of failure modes, each with: **what fails · the mechanism of failure · likelihood × impact (rough) · the cheapest guard or early-warning signal.** Lead with the one most likely to actually bite. If the remedy is genuinely robust for this problem, say so and name the one residual risk worth watching. Do not redesign the remedy — surface how it fails; the orchestrator folds your findings into the decision record's risks.
+A prioritized list of **at most five** failure modes, each with: **what fails · the mechanism of failure · likelihood × impact (rough) · the cheapest guard or early-warning signal.** Lead with the one most likely to actually bite. If the remedy is genuinely robust for this problem, say so and name the one residual risk worth watching. Do not redesign the remedy — surface how it fails; the orchestrator folds your findings into the decision record's risks.

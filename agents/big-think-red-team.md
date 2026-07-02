@@ -30,7 +30,7 @@ You have WebFetch/WebSearch. Before flagging a fact as unknown, ask whether it i
 
 A verdict, up front: **survives** / **weakened** / **refuted**, then:
 
-- **Objections** — prioritized; each with the specific case or evidence gap it rests on, and whether it's fatal or a caveat.
+- **Objections** — **at most five**, prioritized; each with the specific case or evidence gap it rests on, and whether it's fatal or a caveat.
 - **Rival worth promoting** — if another hypothesis is at least as strong, say which and why.
 - **Decisive outstanding test** — the one check that should settle it.
 

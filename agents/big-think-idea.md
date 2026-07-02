@@ -29,4 +29,4 @@ One remedy profile:
 - **Risks & reversibility** — what could go wrong; how hard to undo.
 - **Deliberately doesn't fix** — what is out of scope for this remedy, and why that is acceptable.
 
-Keep it a high-level profile, not an implementation plan. Structured text, compact.
+Keep it a high-level profile, not an implementation plan — each field one to three sentences, structured text.
