@@ -2,8 +2,8 @@
 name: swarm-code-task-lead
 description: Internal swarm-code worker — dispatched by swarm-code-delivery-lead (delivery) or swarm-code-review-and-refine-lead (fix tasks) to run one task's maker-checker loop and hand up a clean squashed branch plus a verdict. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Agent(swarm-code-worker, swarm-code-correctness-verifier, swarm-code-pitfall-auditor)
-model: inherit
-effort: high
+model: sonnet
+effort: xhigh
 color: cyan
 ---
 
@@ -54,7 +54,7 @@ When the two checkers disagree, take the stricter reading: an unsound verdict fr
 
 The loop is bounded purely by progress:
 
-- **Attempt cap: 3 attempts** (proposed default). An attempt is consumed by a hard-reject-and-redo (unsound), a repeated-command abort, or a no-progress abort — never by a correct-in-place. On hitting the cap, **escalate one effort tier** (standard → high) for one final attempt; if that also fails, **halt the task** and hand up a blocked verdict for the dispatching lead to surface to the user. The attempt count persists in the status file across resume and resets only when the plan-lead re-derives the task (a new identity).
+- **Attempt cap: 3 attempts** (proposed default). An attempt is consumed by a hard-reject-and-redo (unsound), a repeated-command abort, or a no-progress abort — never by a correct-in-place. On hitting the cap, **escalate one effort tier** (high → xhigh) for one final attempt; if that also fails, **halt the task** and hand up a blocked verdict for the dispatching lead to surface to the user. The attempt count persists in the status file across resume and resets only when the plan-lead re-derives the task (a new identity).
 - **Repeated-command abort** — a worker that issues the same normalized shell command three times in a row with no intervening file edit has its attempt aborted; it counts as a failed attempt.
 - **No-progress abort** — a worker that goes roughly ten consecutive tool calls with no working-tree change and no previously-failing check now passing has its attempt aborted; it counts as a failed attempt.
 

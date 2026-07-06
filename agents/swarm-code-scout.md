@@ -2,8 +2,8 @@
 name: swarm-code-scout
 description: Internal swarm-code worker — dispatched by the swarm-code plan-lead to produce a factual codebase/prior-art inventory that grounds the intake gate. Returns a sourced brief; writes no run-state files. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: inherit
-effort: cheap
+model: sonnet
+effort: high
 color: yellow
 ---
 

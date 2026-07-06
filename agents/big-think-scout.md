@@ -2,7 +2,7 @@
 name: big-think-scout
 description: Internal big-think worker — dispatched ad-hoc by the big-think skill to ground one specific question against reality across the local tree, org-wide repos, deployed/live systems, third-party docs, and the web in a single pass, and to run the read-only discriminating probe at the Understanding Gate. Returns a sourced brief; writes no files. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: inherit
+model: sonnet
 effort: high
 color: yellow
 ---

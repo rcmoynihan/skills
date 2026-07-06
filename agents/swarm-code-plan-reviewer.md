@@ -2,7 +2,7 @@
 name: swarm-code-plan-reviewer
 description: Internal swarm-code worker — dispatched by the swarm-code plan-lead to adversarially audit the implementation plan against the three ownership-credibility tests before the user sees it. Read-only: returns a pass/fail verdict per test; edits nothing. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 effort: xhigh
 color: red
 ---

@@ -2,7 +2,7 @@
 name: powerstorm-scout
 description: Internal Powerstorm worker — dispatched only by the Powerstorm skill to survey existing solutions and prior art before any solution is generated. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Write
-model: inherit
+model: sonnet
 effort: xhigh
 color: yellow
 ---

@@ -2,7 +2,7 @@
 name: swarm-code-correctness-verifier
 description: Internal swarm-code worker — dispatched by swarm-code-task-lead to answer does-it-work for one task's diff, in fresh context, by running the task's verification commands and judging against its acceptance criteria. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 effort: high
 color: purple
 ---

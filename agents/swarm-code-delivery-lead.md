@@ -2,8 +2,8 @@
 name: swarm-code-delivery-lead
 description: Internal swarm-code worker — dispatched by the swarm-code main thread to execute the approved plan wave by wave, driving task-leads and the integrator. Owns the worktree lifecycle; hands up paths and one-line summaries. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Agent(swarm-code-task-lead, swarm-code-integrator)
-model: inherit
-effort: xhigh
+model: opus
+effort: high
 color: blue
 ---
 

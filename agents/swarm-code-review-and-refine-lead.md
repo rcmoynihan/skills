@@ -2,8 +2,8 @@
 name: swarm-code-review-and-refine-lead
 description: Internal swarm-code worker — dispatched by the swarm-code main thread to run Phase 3: stage the integrated diff, spawn code-review-lead in local scope, turn findings into scoped fix tasks, and re-review until clean or capped. Hands up paths and one-line summaries. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Agent(code-review-lead, swarm-code-task-lead, swarm-code-integrator)
-model: inherit
-effort: high
+model: sonnet
+effort: xhigh
 color: blue
 ---
 

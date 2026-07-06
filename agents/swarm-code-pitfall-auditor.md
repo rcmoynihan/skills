@@ -2,7 +2,7 @@
 name: swarm-code-pitfall-auditor
 description: Internal swarm-code worker — dispatched by swarm-code-task-lead to answer is-it-clean for one task's diff, in fresh context, against an embedded four-cluster coding-agent-pitfall rubric. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 effort: high
 color: red
 ---

@@ -2,7 +2,7 @@
 name: swarm-code-intake-gate
 description: Internal swarm-code worker — dispatched by the swarm-code plan-lead to apply the under-specification test and return exactly one verdict — PROCEED, or STOP with an ambiguity register. Read-only: diagnoses, never edits the spec. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 effort: high
 color: orange
 ---

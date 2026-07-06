@@ -2,7 +2,7 @@
 name: to-design-scout
 description: Internal to-design worker — dispatched ad-hoc by the to-design skill to ground one load-bearing design fact against reality (existing-system behavior, dependency guarantees, platform capabilities, established patterns). Returns a sourced brief; writes nothing. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: inherit
+model: sonnet
 effort: high
 color: yellow
 ---

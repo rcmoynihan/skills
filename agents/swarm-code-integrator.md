@@ -2,8 +2,8 @@
 name: swarm-code-integrator
 description: Internal swarm-code worker — dispatched by the swarm-code delivery-lead and review-and-refine-lead to serial-merge verified branches into swarm/<slug> with an ownership veto and a wave gate after each merge, kicking semantic conflicts to the plan-lead. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
-effort: high
+model: sonnet
+effort: xhigh
 color: cyan
 ---
 

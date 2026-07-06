@@ -2,8 +2,8 @@
 name: swarm-code-worker
 description: Internal swarm-code worker — dispatched by swarm-code-task-lead to implement one task strictly within its owned files. The only leaf that authors source. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
-effort: standard
+model: sonnet
+effort: high
 color: green
 ---
 

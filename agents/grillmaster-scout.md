@@ -2,7 +2,7 @@
 name: grillmaster-scout
 description: Internal Grillmaster worker — dispatched by the agenda planner to ground the initial agenda, or ad-hoc by the grill (main thread or facilitator) to research, verify, or explore one specific question across local and org-wide codebases, deployed services, third-party docs, and the web. Returns a sourced brief; writes no state files. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: inherit
+model: sonnet
 effort: high
 color: yellow
 ---

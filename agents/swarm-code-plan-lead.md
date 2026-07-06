@@ -2,7 +2,7 @@
 name: swarm-code-plan-lead
 description: Internal swarm-code worker — dispatched by the swarm-code main thread to own Phase 1: build (or re-derive) implementation-plan.md and hand it back for the approval gate. Writes coordination/plan files only; never edits source. Do not use for unrelated tasks.
 tools: Read, Grep, Glob, Bash, Write, Agent(swarm-code-scout, swarm-code-intake-gate, swarm-code-plan-reviewer)
-model: inherit
+model: opus
 effort: xhigh
 color: blue
 ---
