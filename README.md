@@ -30,8 +30,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/
 `${TMPDIR:-/tmp}` is the base (honoring a per-user `$TMPDIR` on macOS, falling back to `/tmp`); the
 `code-goblin-pro/` subdir namespaces every skill's files in one place, keyed by run (e.g.
 `grillmaster-<slug>/`, `swarm-code-<date>-<slug>/`, `pr-<ref>-review.md`). Any new skill that writes
-scratch or deliverable files uses this dir. The one deliberate exception is `powerstorm`, which keeps
-its per-run spec set in a repo-local, gitignored `.powerstorm/` beside the code.
+scratch or deliverable files uses this dir.
 
 ## Skills
 
@@ -40,7 +39,6 @@ its per-run spec set in a repo-local, gitignored `.powerstorm/` beside the code.
 | `drive-claude-code` | `/drive-claude-code` | Delegate coding tasks to the Claude Code CLI from the shell. |
 | `drive-codex` | `/drive-codex` | Delegate coding tasks to the OpenAI Codex CLI (`codex exec`). |
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
-| `powerstorm` | `/powerstorm` | Run a structured multi-agent brainstorm that turns a rough problem into an implementation-ready spec set. |
 | `big-think` | `/big-think` | Understanding-first thinking harness — triage a hard problem into a posture (diagnose / frame / orient / survey / decide), fan out lenses to build a locked understanding through a hard Understanding Gate, then diverge on approaches and converge on a recommended decision record. |
 | `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the plugin's temp dir. |
 | `post-review-comments` | `/post-review-comments` | Post a finished code-review report's findings to the PR — strongly inline, top-level only for a genuine cross-cutting concern, never a summary. |
@@ -51,10 +49,9 @@ its per-run spec set in a repo-local, gitignored `.powerstorm/` beside the code.
 `disable-model-invocation: true`, so they only fire when you invoke them explicitly as a slash
 command.
 
-`powerstorm` ships a set of dedicated subagents under `agents/` (the `powerstorm-*` workers) that
-the skill dispatches by name through its phases. `code-review` ships the `code-review-*` agents the
-same way: the skill spawns `code-review-lead`, which spawns the reviewer-persona workers as its own
-children. `big-think` ships the `big-think-*` workers (`analyst`, `scout`, `red-team`, `idea`,
+`code-review` ships the `code-review-*` agents that the skill dispatches by name: the skill spawns
+`code-review-lead`, which spawns the reviewer-persona workers as its own children. `big-think` ships
+the `big-think-*` workers (`analyst`, `scout`, `red-team`, `idea`,
 `premortem`) that its main-thread orchestrator dispatches by name across the two diamonds.
 
 ## Adding a skill
