@@ -16,11 +16,13 @@ You own Phase 1 of a swarm-code run: turning a settled spec into the single cont
 Your dispatch prompt is self-contained and carries:
 
 - **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — the shared-memory root for the whole run.
-- **The spec/design input** — the path to the settled spec (or the freetext) and its `<slug>`.
+- **The input-spec path** and its `<slug>`. The input is a spec/design artifact, a freetext task, or a **completed plan-mode plan** (the approved output of Claude Code's or Codex's native plan mode — usually a file under `~/.claude/plans/`, referenced in place, occasionally captured to the run dir). All three are consumed identically: read the input in full, and derive everything from it.
 - **The integration branch** — `swarm/<slug>` — and the run's posture.
 - **On a re-derivation:** the kickback context — either the user's corrections from the approval gate, or the integrator's semantic-conflict report (which tasks/ownership the merge exposed as wrong).
 
 Read the spec in full first. Everything you build derives from it.
+
+When the input is a plan-mode plan, treat it as exactly that — the spec you derive *from*, not a finished contract. A native plan carries implementation intent but none of swarm-code's coordination structure (task DAG, waves, ownership matrix, verification modes, verbatim invariants), and its having been approved in plan mode is not the intake gate's sufficiency verdict. Run the scout and intake gate over it, and derive `implementation-plan.md` the same as from any spec; never adopt or reformat the incoming plan as the contract.
 
 ## Step 1 — Ground the run (dispatch the scout)
 
@@ -63,7 +65,7 @@ Write `implementation-plan.md` to the run dir in exactly this schema:
 ```yaml
 run:
   slug: <task-slug>
-  spec_source: <path | "freetext">
+  spec_source: <path | "freetext">   # a spec/design path, a plan-mode plan path (e.g. ~/.claude/plans/…), or "freetext"
   integration_branch: swarm/<slug>
   posture: <from spec>
 invariants: |

@@ -1,17 +1,38 @@
 ---
 name: swarm-code
-description: Drive an already-settled spec/design to a review-ready branch through a three-phase multi-agent swarm — plan, deliver, review-and-refine — keeping the orchestrator's context pristine and every task independently verified before it integrates. The fourth link after grillmaster → to-spec → to-design; consumes a spec, never re-opens design. Use when you have a detailed spec and want it implemented with swarm-grade context isolation and generator/verifier separation.
-argument-hint: "(optional) path to a spec/design file or freetext task; append --draft-pr to also open a draft PR on the deliverable branch"
+description: Drive an already-settled spec, design, or completed plan-mode plan (from Claude Code or Codex) to a review-ready branch through a three-phase multi-agent swarm — plan, deliver, review-and-refine — keeping the orchestrator's context pristine and every task independently verified before it integrates. The fourth link after grillmaster → to-spec → to-design, and the on-ramp for a native plan-mode plan; consumes its input as a spec and derives its own task plan, never re-opening design. Use when you have a detailed spec or an approved plan and want it implemented with swarm-grade context isolation and generator/verifier separation.
+argument-hint: "(optional) path to a spec/design file, a completed plan-mode plan (e.g. ~/.claude/plans/…), or freetext task; append --draft-pr to also open a draft PR on the deliverable branch"
 disable-model-invocation: true
 ---
 
 # swarm-code
 
-Implementing a large, detailed spec or plan with one coding agent degrades as the work grows: a single context window accumulates every file read, every failed test, and every correction, and the agent self-reviews its own work — inheriting its own blind spots. swarm-code takes an **already-settled** spec/design and drives it to merge-ready code through a three-phase, multi-agent swarm, so that **no single context ever holds the whole job** and **every task is independently verified** before it can integrate. It is the fourth link in the suite chain — **grillmaster → to-spec → to-design → swarm-code** — and it consumes a settled spec; it never re-opens product or design decisions.
+Implementing a large, detailed spec or plan with one coding agent degrades as the work grows: a single context window accumulates every file read, every failed test, and every correction, and the agent self-reviews its own work — inheriting its own blind spots. swarm-code takes an **already-settled** spec/design (or a completed plan-mode plan from Claude Code or Codex) and drives it to merge-ready code through a three-phase, multi-agent swarm, so that **no single context ever holds the whole job** and **every task is independently verified** before it can integrate. It is the fourth link in the suite chain — **grillmaster → to-spec → to-design → swarm-code** — and it also takes a native plan-mode plan directly; either way it consumes its input as a settled spec and never re-opens product or design decisions.
 
 **You are the orchestrator, and your context is the asset to protect.** You run in the main thread and dispatch exactly three lead subagents, one per phase, in order: `swarm-code-plan-lead` (Phase 1), `swarm-code-delivery-lead` (Phase 2), and `swarm-code-review-and-refine-lead` (Phase 3). You hold **only file paths and one-line summaries** — never artifact bodies, diffs, plan contents, or worker transcripts. The heavy context (the plan, the diffs, the reasoning, the failed attempts) lives inside the leads and their children, and on disk in a run directory that acts as shared memory. This is the primary value of the skill, not an implementation detail: context hygiene is what a single agent cannot give you, and it is enforced structurally by the topology and the run dir, not by convention. If you find yourself reading a diff or a plan body into your own context, you are defeating the skill — read the path, dispatch the lead that owns that work, and keep the pointer.
 
 The primary value, in priority order: (1) **context hygiene / single-responsibility agents** — the load-bearing property above; (2) **quality via generator/verifier separation** — every task gets an independent correctness check and an independent pitfall audit, in fresh context, never self-review; (3) **throughput** — a conditional bonus only where the plan proves disjoint file ownership, never the justification for running.
+
+## Accepted inputs and on-ramps
+
+swarm-code's input is a **settled statement of what to build**, in any of these forms — all consumed identically as the run's **input spec** (a path the leads read, never a body you hold):
+
+- a spec/design artifact from the suite chain (**grillmaster → to-spec → to-design → swarm-code**);
+- a **completed plan-mode plan** from Claude Code's or Codex's built-in plan mode — the approved output of a native planning session;
+- a freetext task stated directly at invocation.
+
+The plan-mode on-ramp is a first-class peer of the suite chain, not a special case — it is the natural bridge for someone who planned in Claude Code or Codex and now wants that plan executed with swarm-grade context isolation and generator/verifier separation.
+
+**Reference the plan file in place — never rewrite or re-summarize it.** Claude Code persists each plan-mode plan as a standalone markdown file under `~/.claude/plans/`, named `<slug>-<adjective>-<noun>.md` (that trailing `<adjective>-<noun>` is how a user refers to one — e.g. "the giggly-kite plan" is `…-giggly-kite.md`). Resolve the path and hand it down as the input-spec path; you rewrite nothing and no plan body enters your context or a lead's prompt.
+
+```bash
+ls -t ~/.claude/plans/*.md 2>/dev/null | head              # most-recent plan-mode plans
+ls -t ~/.claude/plans/*giggly-kite*.md 2>/dev/null | head  # by the <adjective>-<noun> name the user gives
+```
+
+Referencing the existing file is the canonical path. Only when the plan is **not** already a file on disk — a Codex plan that lives in session state, or a plan pasted inline — does the main thread capture it verbatim to `input-plan.md` in the run dir and use that path instead. Either way, `spec_source` records the path used.
+
+**A plan-mode plan is an input spec, never swarm-code's own `implementation-plan.md`** — two different artifacts that share a word. The incoming plan states *implementation intent* (steps, files, sequencing) but carries none of swarm-code's coordination structure: no task DAG, no waves, no four-tier ownership matrix, no per-task verification modes, no verbatim invariants block. So swarm-code **does not start writing code on receipt of a plan** and **does not skip Phase 1.** It runs Phase 1 in full — the scout grounds the plan, the intake gate applies the same under-specification test to it (being approved in plan mode is *not* the gate's sufficiency verdict; a native plan can be approved while a product or design decision is still unmade, which STOPs here exactly as any spec would), and the plan-lead derives the DAG, waves, ownership, and verification gates into `implementation-plan.md` — the artifact the user approves at the one interactive gate.
 
 ## One mechanism, scaled by width
 
@@ -39,6 +60,7 @@ All run state lives under a dedicated dir in the system temp dir; **nothing is w
 ```
 ${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/
   run-state.json          # slug, integration_branch, original_branch, stash_ref, current_phase, current_wave
+  input-plan.md           # captured input spec — present only when a plan-mode plan was pasted inline instead of referenced as a file
   scout-inventory.md      # the scout's factual codebase/prior-art brief (grounds the intake gate)
   ambiguity-register.md   # STOP output (empty/absent on PROCEED)
   implementation-plan.md  # THE contract — the approved copy is immutable to workers
@@ -75,7 +97,7 @@ The main thread orchestrates three phases in order, with exactly one interactive
 
 ### Phase 1 — Planning
 
-Dispatch `swarm-code-plan-lead` with the run-dir path and the input-spec path (or the freetext task). The plan-lead runs Phase 1 end to end inside its own context: a **scout** produces a factual codebase/prior-art inventory; an **intake-gate** applies the governing under-specification test grounded in that inventory; on PROCEED the plan-lead derives the task DAG, the parallel waves (wave 0 = contract/setup), the four-tier per-task ownership matrix, per-task and per-wave verification gates, and any `requires_human` flags; and a **plan-reviewer** runs the three credibility tests before you ever see the plan. What the plan-lead hands back to you is the path to `implementation-plan.md` (or the path to `ambiguity-register.md` on a STOP) plus a one-line summary — not the plan body.
+Dispatch `swarm-code-plan-lead` with the run-dir path and the input-spec path — a spec/design artifact, a plan-mode plan file (referenced in place; see *Accepted inputs and on-ramps*), or the freetext task, all consumed identically. The plan-lead runs Phase 1 end to end inside its own context: a **scout** produces a factual codebase/prior-art inventory; an **intake-gate** applies the governing under-specification test grounded in that inventory; on PROCEED the plan-lead derives the task DAG, the parallel waves (wave 0 = contract/setup), the four-tier per-task ownership matrix, per-task and per-wave verification gates, and any `requires_human` flags; and a **plan-reviewer** runs the three credibility tests before you ever see the plan. This full derivation runs even when the input is itself a plan-mode plan — that plan is the spec Phase 1 derives *from*, never the `implementation-plan.md` it produces. What the plan-lead hands back to you is the path to `implementation-plan.md` (or the path to `ambiguity-register.md` on a STOP) plus a one-line summary — not the plan body.
 
 ### The plan-approval gate — the one interactive contract
 

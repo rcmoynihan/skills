@@ -34,7 +34,7 @@ When you are unsure whether something is inferable, look: read the cited code an
 Your dispatch prompt is self-contained and carries:
 
 - **The run-dir path** — `${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/` — the shared-memory root you read from.
-- **The spec/design input** — the path to the settled spec (or the freetext) you are judging.
+- **The input-spec path** — the settled input you are judging: a spec/design artifact, a freetext task, or a completed plan-mode plan from Claude Code's or Codex's native plan mode. Judge it exactly as any spec — being approved in plan mode is not a sufficiency verdict, because plan mode settles implementation steps, not necessarily the product/design decisions your test covers.
 - **The scout inventory path** — `scout-inventory.md` in the run dir — the factual codebase brief that grounds your latitude-vs-gap calls, plus the prior-art it gathered (advisory context for implementation mechanics, not a basis for the verdict).
 - **The repository root**, so you can read the code the inventory cites to confirm inferability yourself.
 
