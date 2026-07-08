@@ -45,7 +45,7 @@ There is **no task-size gate, no over-use nudge, and no decline for being small 
 - It never **auto-merges.** The deliverable is a `swarm/<slug>` branch (and, on request, a draft PR) that the user reviews and merges themselves. The user is always the final gate.
 - It never touches the user's **original branch history.** All run commits land on `swarm/<slug>`; the original branch receives none.
 - It never **edits the input spec.** It diagnoses why a spec is under-specified (the ambiguity register) and routes the user onward, but it does not rewrite product or design decisions — those belong to grillmaster / to-spec / to-design.
-- It has **no cost, token, budget, or wall-clock accounting** of any kind. Runaway protection is entirely progress-based (attempt caps, repeated-command and no-progress aborts, review-round and re-plan caps). Do not track or report tokens, cost, or budget anywhere.
+- It has **no cost, token, budget, or wall-clock accounting** of any kind. Runaway protection is entirely progress-based (attempt caps, repeated-command and no-progress aborts, and a re-plan cap). Do not track or report tokens, cost, or budget anywhere.
 
 ## Dispatching the three leads
 
@@ -66,7 +66,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/swarm-code-<date>-<slug>/
   implementation-plan.md  # THE contract — the approved copy is immutable to workers
   status/<task-id>.json   # per-task resume checkpoint
   worktrees/<task-id>/     # concurrent-task worktrees (width>1 only); absent for swarm-of-one
-  code-review/            # Phase-3 staging: full.diff, files.txt, intent.md, review-round-<n>.md
+  code-review/            # Phase-3 staging: full.diff, files.txt, intent.md, review-round-1.md
   logs/                   # per-agent dispatch/return logs (the coordination trace)
 ```
 
@@ -121,7 +121,7 @@ You do not see any of this fan-out. The delivery-lead returns the integration st
 
 ### Phase 3 — Review-and-Refine (autonomous)
 
-Dispatch `swarm-code-review-and-refine-lead` with the run-dir path and the plan path. It stages the integrated diff and spawns the reused `code-review-lead` against it (in local scope, against the main tree on `swarm/<slug>`), turns findings into scoped fix task-leads (the same maker-checker loop), and has the integrator re-merge before re-reviewing. The loop terminates on a clean or nits-only verdict, or after three rounds; if three rounds close with non-nit findings still open, it halts and surfaces the residual report. It returns the final review report path plus a verdict one-liner.
+Dispatch `swarm-code-review-and-refine-lead` with the run-dir path and the plan path. It stages the integrated diff and spawns the reused `code-review-lead` against it (in local scope, against the main tree on `swarm/<slug>`), turns findings into scoped fix task-leads (the same maker-checker loop), and has the integrator re-merge the fixes. This is a **single review pass** — it does not re-review after the fixes merge; it halts only if a fix cannot pass or the integrator kicks back a semantic conflict, never silently shipping an open P0/P1. It returns the review report path plus a verdict one-liner.
 
 ## The under-specification STOP
 
@@ -136,7 +136,7 @@ On STOP, surface to the user: the path to `ambiguity-register.md`, a short summa
 Beyond the approval gate, only two conditions halt an otherwise-autonomous run:
 
 - A **`requires_human` task** — one the plan flagged as verifiable only by human sign-off (runtime/visual/external-system judgment no agent can confirm). This is a high bar, reserved for exactly that; it pauses for the user's sign-off.
-- An **unrecoverable failure** — a task that cannot pass after its attempts and one effort-tier escalation, an ownership veto, or a review loop that hits its round cap with non-nit findings open.
+- An **unrecoverable failure** — a task that cannot pass after its attempts and one effort-tier escalation, an ownership veto, or a review-and-refine fix that cannot pass or that the integrator rejects as a semantic conflict.
 
 On either, **halt rather than degrade.** Finish all *independent* work first (sibling tasks already in flight in the same wave are disjoint, so they complete and hand up), then halt at the **dependency frontier** and report the blocked task/wave plus the current run state. Never proceed past a broken dependency with a gap, and **never silently ship open P0/P1 findings.**
 
