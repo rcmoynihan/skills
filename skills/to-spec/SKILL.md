@@ -17,7 +17,7 @@ The output is a single markdown file written to the run dir: product framing (pr
 
 `to-spec` owns the *what* — the product intent and the behavior a reader can observe. The technical *how* — architecture, data/state, interface realization, operations, deployment, technical decisions, and test seams — is the companion `/to-design` doc. The test for any piece of content: **would it change if we re-implemented the same product a different way?** No → it stays here. Yes → it belongs in the design doc, and this spec only references it.
 
-So behavioral acceptance criteria, the external-interface *promise*, NFR *targets*, and the invariants stay here — invariants as the source of truth, carried forward into the design lane by id. Their *realization* — schemas, mechanisms, seams, ADRs — lives in the design doc. Technical asides the grill deflected sit in exactly one place: the non-binding **Carried-Forward Technical Notes** section (§12), which seeds the design grill's agenda and constrains nothing.
+So behavioral acceptance criteria, the external-interface *promise*, NFR *targets*, and the invariants stay here — invariants as the source of truth, carried forward into the design lane by id. Their *realization* — schemas, mechanisms, seams, ADRs — lives in the design doc. Technical asides the grill deflected sit in exactly one place: the non-binding **Carried-Forward Technical Notes** section (§12), which seeds the design grill's agenda and carries no spec authority — a line's `[decided|leaning]` conviction tag travels onward as a design-lane given.
 
 ## How to run this
 
@@ -37,12 +37,13 @@ A finished spec grill leaves its state in the chain's run dir. Rediscover the mo
 ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grill-*/ 2>/dev/null
 ```
 
-If the argument names a run dir, use that. If a recent run matches the topic at hand, read the spec lane's four files — they are your primary source:
+If the argument names a run dir, use that. If a recent run matches the topic at hand, read the spec lane's five files — they are your primary source:
 
 - `spec/initial-agenda.md` — the full concern map; your coverage baseline (what *should* have been examined).
 - `spec/living-agenda.md` — item statuses (`[resolved]` / `[paused]` / `[dropped]` / `[unvisited]`) and the Position block (including the `posture`); this is the routing key for which concern goes to which section.
 - `spec/conversation-path.md` — the turn-by-turn decision trail; this is where the actual decisions and their implications live.
 - `spec/technical-parking-lot.md` — the technical asides the grill deflected; the sole source of §12.
+- `spec/givens.md` — the a-priori details the user brought, with conviction and disposition; a `[consumed]` `decided` given is prime invariant material.
 
 **Amendment awareness:** on a re-run of a run whose `design/living-agenda.md` exists, read its Locked block — every entry tagged `(amended)` is the *current* product decision, superseding what the spec lane recorded; fold each one in (its `amend` row in `design/conversation-path.md` is the source).
 
@@ -51,7 +52,7 @@ Also draw on this conversation. **Standalone fallback:** if no run dir matches, 
 ## Process
 
 1. **Locate & read** the grill run (above), or fall back to the conversation.
-2. **Extract the non-negotiables early.** Pull every non-negotiable: hard constraints, decisions the user insisted on, locked tradeoffs, anything stated as a must/never. These become the `## 3. Invariants & Non-Negotiables` block and govern every section below them — settle them before drafting the detailed requirements, stories, and decisions, even though the problem and solution framing (sections 1–2) is written above them.
+2. **Extract the non-negotiables early.** Pull every non-negotiable: hard constraints, decisions the user insisted on, locked tradeoffs, anything stated as a must/never. A `[consumed]` `decided` given is non-negotiable material of the first order — attribute it `Source: given (intake)` or `given (turn N)`. `leaning` givens that shaped resolutions are ordinary decision material; for a `[superseded]` given the superseding resolution is the material, not the given; `[set-aside]` givens compile to nothing (Out of Scope only if the user said so). These become the `## 3. Invariants & Non-Negotiables` block and govern every section below them — settle them before drafting the detailed requirements, stories, and decisions, even though the problem and solution framing (sections 1–2) is written above them.
 3. **Route the grill's items:** `[resolved]` + the decision trail → the body sections; `[unvisited]`/`[paused]` → **Open Questions**; `[dropped]` → **Out of Scope**; the parking lot → **Carried-Forward Technical Notes**. Speak the grill's own vocabulary.
 4. **Draft the sections in order** (template below), each grounded in the artifacts/conversation and consistent with the invariants; drop the non-negotiables you extracted in step 2 into section 3. Fill what applies; a section with nothing gets a one-line `None.` — do not pad.
 5. **Consistency pass.** Re-read the invariants block and check the whole document against it: no requirement, user story, acceptance criterion, or decision may contradict an `INV-###`. Fix any that do before saving. Then run the cold-reader check: could someone who never saw the conversation run the design grill from this file alone?
@@ -86,7 +87,7 @@ The constraints the rest of the spec must honor. They outrank every requirement,
 
 - **INV-001**: <canonical one-line non-negotiable>
     - Does NOT mean: <the tempting misreading this rules out>   ← only for misread-prone ones
-    - Source: <grill turn/node, e.g. "turn 4 (A4/E1)", or "assumed — confirm">
+    - Source: <grill turn/node, e.g. "turn 4 (A4/E1)", "given (intake)", or "assumed — confirm">
 - **INV-002**: <…>
 
 ## 4. Definitions & Actors
@@ -129,7 +130,7 @@ What the grill did not settle. Each tagged with its grill node id (e.g. `C2`, `F
 
 ## 12. Carried-Forward Technical Notes
 
-Non-binding. Technical asides deflected during the product interview — inputs to the design grill's agenda, not decisions. Nothing here constrains the design. One line each, deduplicated, with origin (turn/node). `None.` if the parking lot is empty.
+Non-binding on this spec. Technical asides deflected during the product interview — inputs to the design grill's agenda. Nothing here carries spec authority. One line each, deduplicated, with origin (turn/node or intake) and any `[decided|leaning]` conviction tag preserved verbatim — a tagged line is the user's stated conviction, and the design grill picks it up as a given. `None.` if the parking lot is empty.
 
 ## 13. Out of Scope
 
@@ -141,6 +142,6 @@ How to verify a built solution meets this spec's *what* — the product-level, b
 
 ## 15. Related / Further Reading
 
-Paths to the spec lane's artifacts (initial-agenda / living-agenda / conversation-path / technical-parking-lot), the companion `grill-<slug>/design.md` once produced, and any other relevant docs.
+Paths to the spec lane's artifacts (initial-agenda / living-agenda / conversation-path / technical-parking-lot / givens), the companion `grill-<slug>/design.md` once produced, and any other relevant docs.
 ```
 </spec-template>

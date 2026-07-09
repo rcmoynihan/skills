@@ -57,7 +57,7 @@ ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grill-*/ 2>/dev/null
 
 - If the argument names a run dir or a spec file, use it. Otherwise take the most recent run matching the topic.
 - Read `grill-<slug>/spec.md` in full — it is your source for the invariants, requirements, acceptance criteria, product decisions, and the `posture` you must honor and reference by id.
-- Read the design lane's three files — `design/initial-agenda.md` (including its Locked block), `design/living-agenda.md` (statuses + the Locked block's current state), `design/conversation-path.md` (the decision trail) — for the technical decisions the grill settled and the concerns it left open.
+- Read the design lane's four files — `design/initial-agenda.md` (including its Locked block), `design/living-agenda.md` (statuses + the Locked block's current state), `design/conversation-path.md` (the decision trail), and `design/givens.md` when present (the a-priori details the user brought; a `[consumed]` `decided` given backs its decision with `given (intake|turn N|spec-lot)` attribution) — for the technical decisions the grill settled and the concerns it left open.
 - **Amendment guard:** if the design lane's Locked block carries any entry tagged `(amended)` whose decision isn't reflected in `spec.md`, **stop** and have the user re-run `/to-spec` first — never compile against a stale spec.
 - Also draw on this conversation. **Missing an input → stop and route**, never fabricate: no `spec.md` → `/to-spec` (or `/spec-grill` if the product side was never grilled); no `design/` lane → `/design-grill`. There is no standalone mode — a design doc without its settled inputs would be invented architecture.
 
@@ -182,7 +182,7 @@ Deployment architecture (environments, topology, runtime — design level); roll
 
 The significant technical decisions, each referenced inline where the design first relies on it.
 
-- **DD-001**: <decision> — options weighed: <…>; chosen because <…>; rejected: <…>. (honors INV-001; from grill turn/node or spec)
+- **DD-001**: <decision> — options weighed: <…>; chosen because <…>; rejected: <…>. (honors INV-001; from grill turn/node, spec, or given)
 
 ## 16. Technical Risks & Mitigations  [required]
 
@@ -218,6 +218,6 @@ Every spec id maps to the design that realizes it; a design element tracing to n
 
 ## 22. Related / Further Reading  [required]
 
-The spec (`grill-<slug>/spec.md`), the design lane's artifacts (initial-agenda / living-agenda / conversation-path), and any prior-art docs.
+The spec (`grill-<slug>/spec.md`), the design lane's artifacts (initial-agenda / living-agenda / conversation-path / givens), and any prior-art docs.
 ```
 </design-template>

@@ -37,10 +37,10 @@ Two guard rules:
 ## How to run this
 
 - **One question at a time.** Asking several at once is bewildering. Recommend your best answer for every question you ask. If a question is answerable by a quick local read of the codebase or a referenced doc, go read it inline instead of asking. If it turns on something heavier — what the domain's prior art does, how users behave, what a dependency actually provides — **dispatch the Scout** to find out, rather than guessing or handing the user your homework.
-- **Dispatch four agents, by name.** `grill-planner` (once, at the start), `grill-facilitator` (periodically), `grill-tracer` (when a cluster of product decisions closes, and at the pre-completion gate — see *Dispatching the Tracer*), and `grill-scout` (ad-hoc, whenever a decision needs external grounding — see *Dispatching the Scout*). Use the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. **Every dispatch names the lane and the lane dir:** these are shared workers serving both grills, so each prompt carries `lane: spec` and the lane dir path (plus the posture, and the idea/docs where relevant) — subagents can't see this conversation. The Planner also spawns its own `grill-scout` child at scaffold time to ground the agenda in the domain and prior art. Everything else — the per-turn log, the parking lot, the status updates, the recovery bookkeeping — you do inline. Never dispatch an agent per turn; a per-turn logger would just be re-fed what you already hold. The Scout and the Tracer fetch or test what you *can't* settle yourself — dispatch them on their triggers, not routinely.
-- **You are the sole writer of the three living files** (`living-agenda.md`, `conversation-path.md`, `technical-parking-lot.md`). The Planner writes `initial-agenda.md` once; the Facilitator and the Tracer write nothing — they return exact lines you transcribe. One writer per file, no races.
+- **Dispatch four agents, by name.** `grill-planner` (once, at the start), `grill-facilitator` (periodically), `grill-tracer` (when a cluster of product decisions closes, and at the pre-completion gate — see *Dispatching the Tracer*), and `grill-scout` (ad-hoc, whenever a decision needs external grounding — see *Dispatching the Scout*). Use the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. **Every dispatch names the lane and the lane dir:** these are shared workers serving both grills, so each prompt carries `lane: spec` and the lane dir path (plus the posture, and the idea/docs where relevant) — subagents can't see this conversation. The Planner also spawns its own `grill-scout` child at scaffold time to ground the agenda in the domain and prior art. Everything else — the per-turn log, the parking lot, the givens ledger, the status updates, the recovery bookkeeping — you do inline. Never dispatch an agent per turn; a per-turn logger would just be re-fed what you already hold. The Scout and the Tracer fetch or test what you *can't* settle yourself — dispatch them on their triggers, not routinely.
+- **You are the sole writer of the four living files** (`living-agenda.md`, `conversation-path.md`, `technical-parking-lot.md`, `givens.md`). The Planner writes `initial-agenda.md` once and only *reads* the givens ledger — it reports each given's route and you transcribe it; the Facilitator and the Tracer write nothing — they return exact lines you transcribe. One writer per file, no races.
 - **Restructuring the agenda is not your unilateral call.** Routine changes stay inline — adding a single tangent/new-concern node under an existing area, flipping a status, dropping a stray tangent that fizzled. But *substantial* restructuring — dropping or re-scoping a standing branch, merging or splitting nodes, adding a whole new branch or area — routes through the Facilitator: you propose it (with the live rationale it can't see), it rules, and you apply its verdict by **transcribing the exact changes it returns**, verbatim. You are the pen; the restructuring decision belongs to the un-drifted reader, precisely because you are the one that drifts.
-- **Keep the per-turn cost near zero.** Append one row to the log (never rewrite it); rewrite only the small Position block; flip a status token; append a parking-lot line when one lands. Write the next log row from what's in your context plus the Position block — **almost never re-read the full log.** Only the Facilitator reads the whole log.
+- **Keep the per-turn cost near zero.** Append one row to the log (never rewrite it); rewrite only the small Position block; flip a status token; append a parking-lot or givens line (plus its node annotation) when one lands; flip a given to `[consumed]` when its node resolves with it folded in. Write the next log row from what's in your context plus the Position block — **almost never re-read the full log.** Only the Facilitator reads the whole log.
 - **No change narration in the agendas.** The agendas describe the exploration as it currently stands: status is a field, never "was active, now paused". A newly added concern carries a *standing rationale* ("covers the multi-tenant case the idea implied"), never an event ("user pushed back in turn 12"). The one exemption is `conversation-path.md`, which is a log: it narrates the *conversation* (what the user did, what emerged) but never narrates *artifact edits* — the log records moves, the agenda records current state, neither narrates the other.
 
 ## Posture — the run's rigor tier
@@ -67,6 +67,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/grill-<slug>/
     living-agenda.md           # the working map (you own it)
     conversation-path.md       # append-only turn log (you own it)
     technical-parking-lot.md   # deflected technical asides (you own it)
+    givens.md                  # a-priori details the user brought (you own it)
   spec.md                      # written later by /to-spec
   design/                      # written later by /design-grill
   design.md                    # written later by /to-design
@@ -80,11 +81,11 @@ ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grill-*/ 2>/dev/null
 
 Read the matching run dir's contents to place it in the chain:
 
-- `spec/living-agenda.md` exists but no `spec.md` — a spec grill in flight. Offer to resume: read the lane's files, rebuild your position from the `living-agenda.md` Position block, and continue the interview.
+- `spec/living-agenda.md` exists but no `spec.md` — a spec grill in flight. Offer to resume: read the lane's files, rebuild your position from the `living-agenda.md` Position block, and continue the interview; `givens.md`'s `[open]` entries are standing details to re-hold (`decided` held as the user's call, `leaning` as the default recommendation for its node).
 - `spec.md` (or `design/`, or `design.md`) exists — this run's spec lane is already compiled. Starting a new spec grill here is a **re-grill**: warn that `spec.md`, `design/`, and `design.md` go stale and confirm before proceeding.
 - No run dir matches the idea — create a fresh `grill-<slug>/` with an empty `spec/`.
 
-## The four state files
+## The five state files
 
 **`initial-agenda.md`** — the frozen first map, written once by the Planner: lettered concern areas, numbered items, every item `[unvisited]`. Read it to seed the living agenda and again only at completion (the coverage diff). **Don't re-read it mid-grill** — it re-anchors you on the original map and fights the living one.
 
@@ -99,23 +100,27 @@ Read the matching run dir's contents to place it in the chain:
 turn | active-node | move | summary | implication | drift | next-node
 ```
 
-`move` ∈ `answer | correct | tangent | new-concern | park | meta`. Distinguish `correct` (the user refines/rejects the current node's answer — you re-answer in place, stay put) from `tangent` (the user pulls toward a different node — you set a resume pointer and descend); their recoveries differ, so the classification is load-bearing. `park` is the lane's own move: the user's turn was *wholly* a technical pull — you appended it to the parking lot and stayed put, map untouched (`next-node` = the same node). `meta` covers a non-user event that changed your read of the map — a Facilitator pass, a **Tracer pass** (put its verdict + the contradiction or the nodes it opened in `summary`/`implication`), or a Scout finding that materially informed a decision (put the finding + source in `summary`/`implication`), so a node closed on a *verified* fact is legible as such and not mistaken for one closed on assumption. `summary` and `implication` are ≤12 words each. `drift` ∈ `none | watch | deep`.
+`move` ∈ `answer | correct | tangent | new-concern | park | given | meta`. Distinguish `correct` (the user refines/rejects the current node's answer — you re-answer in place, stay put) from `tangent` (the user pulls toward a different node — you set a resume pointer and descend); their recoveries differ, so the classification is load-bearing. `park` is the lane's own move: the user's turn was *wholly* a technical pull — you appended it to the parking lot and stayed put, map untouched (`next-node` = the same node). `given` is `park`'s in-lane twin: the turn was *wholly* an a-priori product detail aimed at a node that isn't active — you appended a givens line, annotated the target node in the living agenda, and stayed put (a detail about the *active* node is ordinary material for the current answer; a technical detail parks instead). A given riding along with a substantive answer keeps the turn's real move, with the filing noted in `implication` (e.g. "filed G4 → E2"). `meta` covers a non-user event that changed your read of the map — a Facilitator pass, a **Tracer pass** (put its verdict + the contradiction or the nodes it opened in `summary`/`implication`), or a Scout finding that materially informed a decision (put the finding + source in `summary`/`implication`), so a node closed on a *verified* fact is legible as such and not mistaken for one closed on assumption. `summary` and `implication` are ≤12 words each. `drift` ∈ `none | watch | deep`.
 
-**`technical-parking-lot.md`** — the append-only ledger of technical asides deflected out of lane, one line per item. Nothing in it is a decision; `/to-spec` compiles it into the spec's non-binding Carried-Forward Technical Notes section, and the design grill's Planner seeds candidate agenda items from it. Append and move on — never expand an entry into a discussion.
+**`technical-parking-lot.md`** — the append-only ledger of technical asides deflected out of lane, one line per item. Nothing in it binds this lane or the spec; `/to-spec` compiles it into the spec's non-binding Carried-Forward Technical Notes section, and the design grill's Planner seeds candidate agenda items from it. A line may carry a trailing `[decided|leaning]` tag — the user's stated conviction about a technical detail; the tag binds nothing here, but the design grill picks the line up as a given. Append and move on — never expand an entry into a discussion.
+
+**`givens.md`** — the ledger of a-priori details the user brought, at intake or mid-grill: one line per given, `- [open] G1 (decided, intake) <one-line detail> → B3` — status, stable ID, conviction + origin (`intake` or `turn N`), the detail, and the node it routes to (`→ —` until routed). Statuses: **`open` / `consumed` / `superseded` / `set-aside`**. Conviction: `decided` — the user's settled call, held once confirmed; `leaning` — a preference, the default recommendation for its node. Entries are append-only; only the status token and the route mutate — current state lives in the fields, never in appended notes.
 
 ### Parking a technical pull
 
-When the user raises technical content — or your own drafted recommendation starts answering a technical question — park it: append one line to `technical-parking-lot.md` (`- <the technical question or idea, one line> (turn N, near <node-id>)`), acknowledge in at most one sentence ("parked for the design grill"), and re-ask the product question you were on. **Never discuss the parked item, never recommend an answer for it** — a recommendation is a design decision made in the wrong lane. If the user insists on resolving it now, name the boundary: this grill produces the spec; `/design-grill` exists precisely for that question and will hold everything decided here as its ground.
+When the user raises technical content — or your own drafted recommendation starts answering a technical question — park it: append one line to `technical-parking-lot.md` (`- <the technical question or idea, one line> (turn N, near <node-id>)`, with a trailing `[decided|leaning]` when the user stated conviction; details extracted at intake use `(intake)`), acknowledge in at most one sentence ("parked for the design grill"), and re-ask the product question you were on. **Never discuss the parked item, never recommend an answer for it** — a recommendation is a design decision made in the wrong lane. If the user insists on resolving it now, name the boundary: this grill produces the spec; `/design-grill` exists precisely for that question and will hold everything decided here as its ground.
 
 Log it: a turn that was wholly a technical pull is `move: park` (stay on the current node). A technical aside riding along with a substantive product answer keeps the turn's real move, with the park noted in `implication` (e.g. "parked: storage choice").
 
 ## Phase 1 — Scaffold the agenda (Planner)
 
-Create the run dir. Dispatch `grill-planner` with `lane: spec`, the lane dir path (`grill-<slug>/spec/`), and the idea (plus any codebase paths, docs, or links the user named). The Planner grounds itself first — it dispatches its own `grill-scout` child to survey the domain, its users, and prior art, then folds what already exists into the agenda as concrete product questions — and writes `initial-agenda.md`. It also proposes a **posture** (the run's rigor tier) from the idea and its grounding, recorded at the top of that file. The grounding lives in the agenda items, so the lane dir stays the four files above.
+Create the run dir, then run **intake**: create `givens.md` and `technical-parking-lot.md` with just their headers, and extract every a-priori detail embedded in the user's invocation — the specifics that ride along with the idea rather than constitute it. Product details become givens lines (`[open]`, origin `intake`, route `→ —`); technical details become conviction-tagged parking-lot lines. Tag `decided` only when the user stated it as settled ("must", "we're using X"); otherwise `leaning` — when unsure, `leaning`: under-claiming costs a normal grill, over-claiming skips scrutiny.
 
-Seed the living agenda from it: copy the concern areas and items into `living-agenda.md`, every item `[unvisited]`, and add a fresh Position block (`posture:` set to the Planner's proposal, `active: —`, `resume-target: —`, `turns-since-node-change: 0`, `last-facilitator: —`). The living copy must read as clean current state — no "copied from…" note. Create `technical-parking-lot.md` with just its header.
+Dispatch `grill-planner` with `lane: spec`, the lane dir path (`grill-<slug>/spec/`), the idea (plus any codebase paths, docs, or links the user named), and the givens path when any were filed. The Planner grounds itself first — it dispatches its own `grill-scout` child to survey the domain, its users, and prior art, then folds what already exists into the agenda as concrete product questions — and writes `initial-agenda.md`, threading each given into the item it informs. It also proposes a **posture** (the run's rigor tier) from the idea and its grounding, recorded at the top of that file. The grounding lives in the agenda items, so the lane dir stays the five files above. When the Planner returns, transcribe the routes it reports into the ledger's route fields.
 
-Give the user a short summary of the agenda (the concern areas, where you'll start), then **start interviewing** — spec-grill does not gate here. Your **opening move is to confirm the posture**: state the tier the Planner proposed, recommend it as the answer, and ask the user to confirm or correct it before grilling the substantive items. When the tier is genuinely ambiguous the Planner will have made it concern area A; when it's obvious it's just a quick confirm the user can wave through. Then pick up the loop below.
+Seed the living agenda from it: copy the concern areas and items into `living-agenda.md` (given annotations ride along), every item `[unvisited]`, and add a fresh Position block (`posture:` set to the Planner's proposal, `active: —`, `resume-target: —`, `turns-since-node-change: 0`, `last-facilitator: —`). The living copy must read as clean current state — no "copied from…" note.
+
+Give the user a short summary of the agenda (the concern areas, where you'll start), list each intake given with its ID, conviction, and route (`G1 (decided) → B5: per-user export toggle`) — acknowledgment, not resolution: every node stays `[unvisited]`, and each `decided` given is confirmed when its node goes active, one per turn — and extend the standing invite: anything the user already knows they want, said now or any time, gets filed where it belongs. Then **start interviewing** — spec-grill does not gate here. Your **opening move is to confirm the posture**: state the tier the Planner proposed, recommend it as the answer, and ask the user to confirm or correct it before grilling the substantive items. When the tier is genuinely ambiguous the Planner will have made it concern area A; when it's obvious it's just a quick confirm the user can wave through. Then pick up the loop below.
 
 ## The interview loop
 
@@ -124,7 +129,7 @@ Each turn, in order:
 1. **Ask** the one next question, with your recommended answer. Wait for the user.
 2. **Sort the reply against the lane boundary** — technical content gets parked (above) before anything else happens.
 3. **Log** — append one row to `conversation-path.md`: the active node, the `move`, a ≤12-word summary and implication, the `drift` read, and where you're headed next.
-4. **Update the map** — flip the active item's status if it resolved (**at most one standing item per turn** — closing several at once is how a shallow answer slips through unexamined; if you're tempted to bulk-close, you're describing, not resolving); add any new concern; rewrite the Position block (bump or reset `turns-since-node-change`, update `active` / `resume-target`).
+4. **Update the map** — flip the active item's status if it resolved (**at most one standing item per turn** — closing several at once is how a shallow answer slips through unexamined; if you're tempted to bulk-close, you're describing, not resolving), and flip its given to `[consumed]` when the resolution folded one in; add any new concern; rewrite the Position block (bump or reset `turns-since-node-change`, update `active` / `resume-target`).
 5. **Check the triggers** (cheap reasoning, no tool call — see below). If a hard trigger is due, dispatch the Facilitator before asking the next question.
 
 ### Dispatching the Scout
@@ -140,6 +145,7 @@ Fold the finding into your recommended answer for the node. When it materially i
 - **`correct`** — re-answer the current node with the user's correction folded in. Stay on the node; don't pivot the whole interview around a single correction.
 - **`tangent` / `new-concern`** — if the concern is a single new node under an existing area, add it inline (`reason added: …`); if it's a whole new branch or area, that's substantial restructuring — take it to the Facilitator (see *Restructuring the agenda* under **When to call the Facilitator**), don't scaffold it yourself. Either way, set `resume-target` to the current node **only if it isn't already an outstanding resume obligation** — record the *shallowest* unfinished node, so you always know the top of the thread to return to. If `resume-target` is already set you're nesting: keep the shallow pointer (don't overwrite it) — nesting is a hard Facilitator trigger, and the Facilitator reconstructs the deeper return order from the log. Mark the node you're leaving `[paused]`, make the tangent `[active]`, and descend.
 - **`park`** — not a tangent: the map doesn't move. Append the parking-lot line, stay on the node, re-ask the product question. If the same technical pull recurs across turns, that's a soft Facilitator signal — the user may be telling you a product concern is hiding under the technical one; let the un-drifted reader make that call.
+- **`given`** — not a tangent either: append the givens line, annotate the target node in the living agenda, stay on the node, re-ask the question you were on. A given with no matching node gets a single new node inline under the right area (`reason added: …`); with no home area, file it `→ —` and take the area to the Facilitator via the restructuring path. When a given-annotated node goes active: a `leaning` given is your recommended answer, grilled at the posture's normal depth; a `decided` given is confirm-once-and-hold — restate it, voice disagreement at most once, and close on the user's confirm, still naming what it bottoms out in (a label-shaped given — "decided: handle errors gracefully" — holds the *choice* while you grill the mechanics beneath it). Once held, don't re-argue it; only a collision — a Tracer or Facilitator finding, or a later decision that contradicts it — reopens it, and the user adjudicates: keep the given and revise the colliding decision, or overturn it (a `correct` move; flip the ledger line to `[superseded]`).
 - **On resolution** — before you mark a node `[resolved]`, name what its answer bottoms out in: the observable behavior, the promise a user can rely on, or the procedure that decides it. Tag the close `[resolved: mechanism]`, `[resolved: firm-up]`, or `[resolved: deferred]` (see the status list). An answer that only *renames the hard part* with a concrete-sounding phrase — "handle it gracefully", "make onboarding smooth", "support Y" — is not a resolution; keep it `[active]`. A load-bearing decision (one that appears in an invariant/requirement or constrains other decisions) must reach `mechanism` to close; only genuine downstream precision may rest at `firm-up`. A stray tangent that fizzled you may `[dropped: <reason>]` inline; but dropping or re-scoping a *standing* agenda item — one that was part of the map — is substantial restructuring, so route it through the Facilitator rather than striking it yourself. Climb back to `resume-target`; if none, take the next `[unvisited]` item in agenda order. Clear `resume-target` when you've returned to it.
 - **Posture correction** — if the user resets the tier, update the `posture:` field. A *downgrade* (e.g. `new-system` → `poc`) keeps the whole map and just dials depth down — never prune. An *upgrade* (`poc` → `new-system`) can leave the map missing the heavier tier's areas: re-dispatch the Planner to extend the agenda additively before continuing. Coverage only ever grows.
 - Most tangents are *abandoned*, not resolved — the user wanders off and never closes them. You won't always notice; that's what the Facilitator is for.
@@ -156,7 +162,7 @@ The Facilitator is your only un-drifted reader, so err toward calling it. The tr
 - **Sticky tangent:** a tangent that has survived more than one user turn without resolving or being dropped.
 - **Deep drift:** you logged `drift: deep` this turn.
 
-**Soft heuristics — consider dispatching:** a branch that feels finished; genuine uncertainty about where to go next; a run of `correct` moves on one node; the same technical pull parked more than twice.
+**Soft heuristics — consider dispatching:** a branch that feels finished; genuine uncertainty about where to go next; a run of `correct` moves on one node; the same technical pull parked more than twice; a given filed with no home node.
 
 **When it's fine to skip — and only then:** `resume-target` is empty **and** the tangent closed within one turn **and** drift was `none`/`watch` **and** no hard trigger is due. "I handled it correctly inline" is **not** a skip condition — a drifting interviewer feels in control, which is the whole reason the un-drifted reader exists.
 
@@ -190,7 +196,8 @@ Then summarize for the user, reading position from `living-agenda.md` and the co
 - which **branches remain unexplored** (`unvisited` / `paused`);
 - which **decisions still need a user call**;
 - which resolved decisions are **`firm-up` or `deferred`** — the approximations and punts, plus any accepted risks the tracing surfaced, for /to-spec to make precise or carry;
-- what was **parked** — the count of technical asides in `technical-parking-lot.md` and its path, the backlog heading into the design grill.
+- how the **givens** landed — each `consumed` into a resolution, `superseded`, or explicitly `set-aside`; none left `[open]`;
+- what was **parked** — the count of technical asides in `technical-parking-lot.md` and its path, the backlog heading into the design grill (conviction-tagged lines travel onward as givens).
 
 Finally, **offer** — don't auto-run — the rest of the chain: `/to-spec` compiles this lane into `grill-<slug>/spec.md`; `/design-grill` then grills the technical side against that spec; `/to-design` compiles the design doc. The grill produces understanding; converting it is the user's call.
 
@@ -217,6 +224,7 @@ Finally, **offer** — don't auto-run — the rest of the chain: `/to-spec` comp
 - [resolved: mechanism] B2 <question> — <the observable behavior/promise/procedure it resolved to>
 - [paused: needs-review] B3 <question> — reason added: <standing rationale>
 - [dropped: superseded by B1] B4 <question> — reason added: <standing rationale>
+- [unvisited] B5 <question to resolve> — given G1 (decided): <one line>
 ```
 
 **`conversation-path.md`**
@@ -230,6 +238,7 @@ Finally, **offer** — don't auto-run — the rest of the chain: `/to-spec` comp
 | 3 | B2 | park | parked: user proposed Postgres schema | product question re-asked | none | B2 |
 | 4 | C2 | meta | facilitator: drifting, 3 areas untouched | climb back to A4; close C2 | deep | A4 |
 | 6 | B3 | meta | scout: competitors all auto-save drafts (web) | B3 default should match | none | B3 |
+| 7 | B3 | given | filed G2: autosave cadence preference (leaning) | E2 annotated; staying on B3 | none | B3 |
 | 8 | C2 | meta | facilitator: sanctioned restructure | drop C3 (superseded by C2); add area G | none | G1 |
 | 10 | F6 | meta | tracer: viewer journey collides F1×K5 | reopen F1, K5; who sees drafts is undecided | deep | F1 |
 ```
@@ -241,7 +250,20 @@ A `meta` row records a non-user event that changed your read of the map. For a *
 ```markdown
 # Technical Parking Lot: <idea>
 
-Append-only. One line per item. Nothing here is a decision — these seed the design grill's agenda.
+Append-only. One line per item. Nothing here binds this lane or the spec — these seed the design grill's agenda; a conviction tag travels onward as a given.
 
 - <one-line technical question or idea> (turn N, near <node-id>)
+- <one-line technical detail the user has settled> (intake) [decided]
+```
+
+**`givens.md`**
+
+```markdown
+# Givens: <idea>
+
+A-priori details the user brought. Entries are append-only; only the status token and the route mutate. `decided` = the user's settled call, held once confirmed; `leaning` = a preference, the default recommendation for its node.
+
+- [open] G1 (decided, intake) <one-line detail> → B5
+- [consumed] G2 (leaning, turn 7) <one-line detail> → E2
+- [set-aside] G3 (leaning, intake) <one-line detail> → —
 ```
