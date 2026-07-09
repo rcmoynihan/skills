@@ -1,13 +1,13 @@
 ---
 name: swarm-code
-description: Drive an already-settled spec, design, or completed plan-mode plan (from Claude Code or Codex) to a review-ready branch through a three-phase multi-agent swarm — plan, deliver, review-and-refine — keeping the orchestrator's context pristine and every task independently verified before it integrates. The fourth link after grillmaster → to-spec → to-design, and the on-ramp for a native plan-mode plan; consumes its input as a spec and derives its own task plan, never re-opening design. Use when you have a detailed spec or an approved plan and want it implemented with swarm-grade context isolation and generator/verifier separation.
+description: Drive an already-settled spec, design, or completed plan-mode plan (from Claude Code or Codex) to a review-ready branch through a three-phase multi-agent swarm — plan, deliver, review-and-refine — keeping the orchestrator's context pristine and every task independently verified before it integrates. The fifth link after spec-grill → to-spec → design-grill → to-design, and the on-ramp for a native plan-mode plan; consumes its input as a spec and derives its own task plan, never re-opening design. Use when you have a detailed spec or an approved plan and want it implemented with swarm-grade context isolation and generator/verifier separation.
 argument-hint: "(optional) path to a spec/design file, a completed plan-mode plan (e.g. ~/.claude/plans/…), or freetext task; append --draft-pr to also open a draft PR on the deliverable branch"
 disable-model-invocation: true
 ---
 
 # swarm-code
 
-Implementing a large, detailed spec or plan with one coding agent degrades as the work grows: a single context window accumulates every file read, every failed test, and every correction, and the agent self-reviews its own work — inheriting its own blind spots. swarm-code takes an **already-settled** spec/design (or a completed plan-mode plan from Claude Code or Codex) and drives it to merge-ready code through a three-phase, multi-agent swarm, so that **no single context ever holds the whole job** and **every task is independently verified** before it can integrate. It is the fourth link in the suite chain — **grillmaster → to-spec → to-design → swarm-code** — and it also takes a native plan-mode plan directly; either way it consumes its input as a settled spec and never re-opens product or design decisions.
+Implementing a large, detailed spec or plan with one coding agent degrades as the work grows: a single context window accumulates every file read, every failed test, and every correction, and the agent self-reviews its own work — inheriting its own blind spots. swarm-code takes an **already-settled** spec/design (or a completed plan-mode plan from Claude Code or Codex) and drives it to merge-ready code through a three-phase, multi-agent swarm, so that **no single context ever holds the whole job** and **every task is independently verified** before it can integrate. It is the fifth link in the suite chain — **spec-grill → to-spec → design-grill → to-design → swarm-code** — and it also takes a native plan-mode plan directly; either way it consumes its input as a settled spec and never re-opens product or design decisions.
 
 **You are the orchestrator, and your context is the asset to protect.** You run in the main thread and dispatch exactly three lead subagents, one per phase, in order: `swarm-code-plan-lead` (Phase 1), `swarm-code-delivery-lead` (Phase 2), and `swarm-code-review-and-refine-lead` (Phase 3). You hold **only file paths and one-line summaries** — never artifact bodies, diffs, plan contents, or worker transcripts. The heavy context (the plan, the diffs, the reasoning, the failed attempts) lives inside the leads and their children, and on disk in a run directory that acts as shared memory. This is the primary value of the skill, not an implementation detail: context hygiene is what a single agent cannot give you, and it is enforced structurally by the topology and the run dir, not by convention. If you find yourself reading a diff or a plan body into your own context, you are defeating the skill — read the path, dispatch the lead that owns that work, and keep the pointer.
 
@@ -17,7 +17,7 @@ The primary value, in priority order: (1) **context hygiene / single-responsibil
 
 swarm-code's input is a **settled statement of what to build**, in any of these forms — all consumed identically as the run's **input spec** (a path the leads read, never a body you hold):
 
-- a spec/design artifact from the suite chain (**grillmaster → to-spec → to-design → swarm-code**);
+- a spec/design artifact from the suite chain (**spec-grill → to-spec → design-grill → to-design → swarm-code**);
 - a **completed plan-mode plan** from Claude Code's or Codex's built-in plan mode — the approved output of a native planning session;
 - a freetext task stated directly at invocation.
 
@@ -44,7 +44,7 @@ There is **no task-size gate, no over-use nudge, and no decline for being small 
 
 - It never **auto-merges.** The deliverable is a `swarm/<slug>` branch (and, on request, a draft PR) that the user reviews and merges themselves. The user is always the final gate.
 - It never touches the user's **original branch history.** All run commits land on `swarm/<slug>`; the original branch receives none.
-- It never **edits the input spec.** It diagnoses why a spec is under-specified (the ambiguity register) and routes the user onward, but it does not rewrite product or design decisions — those belong to grillmaster / to-spec / to-design.
+- It never **edits the input spec.** It diagnoses why a spec is under-specified (the ambiguity register) and routes the user onward, but it does not rewrite product or design decisions — those belong to the grills and their compilers: spec-grill/to-spec for the product, design-grill/to-design for the design.
 - It has **no cost, token, budget, or wall-clock accounting** of any kind. Runaway protection is entirely progress-based (attempt caps, repeated-command and no-progress aborts, and a re-plan cap). Do not track or report tokens, cost, or budget anywhere.
 
 ## Dispatching the three leads
@@ -129,7 +129,7 @@ This is **distinct from** the approval gate: the approval gate is a *pause* (the
 
 The intake-gate applies one governing test, grounded in the scout's factual inventory: *"if I started implementing right now, would I be guessing about the spec, invariants, or requirements?"* If yes, it STOPs. Both missing decisions (**gaps**) and conflicting ones (**contradictions**) are subtypes of under-specification. A gap that is genuinely *inferable from the codebase or the spec's own logic* is normal implementation latitude and yields PROCEED — the gate distinguishes real under-specification from ordinary latitude by grounding the judgment in what the codebase already shows.
 
-On STOP, surface to the user: the path to `ambiguity-register.md`, a short summary of what blocks, and the **named routing skill** for each blocker — `to-spec` when the missing piece is *what* to build, `to-design` when it is *how*, or `grillmaster` when the idea needs a rethink. **No code is written.** swarm-code diagnoses the incompleteness; it does not resolve it and never edits the spec.
+On STOP, surface to the user: the path to `ambiguity-register.md`, a short summary of what blocks, and the **named routing skill** for each blocker — `spec-grill` when the missing piece is *what* to build (including when the idea itself needs a rethink), `design-grill` when it is *how* — then re-run `/to-spec` or `/to-design` to recompile before returning. **No code is written.** swarm-code diagnoses the incompleteness; it does not resolve it and never edits the spec.
 
 ## Halt surfaces
 
@@ -150,7 +150,7 @@ The run dir is the observability surface, and the main thread surfaces only path
 
 ## Guardrails for this skill
 
-- **Suite boundary.** swarm-code references only `grillmaster`, `to-spec`, and `to-design` as sibling skills — these are the STOP-routing targets. Reusing `code-review` (via `code-review-lead`) and drawing the pitfall rubric's provenance from `coding-agent-pitfalls` are dependency relationships, not sibling references. Never route to, mention, or delegate to any other suite skill.
+- **Suite boundary.** swarm-code references only `spec-grill`, `to-spec`, `design-grill`, and `to-design` as sibling skills — the STOP-routing targets are the two grills, with the compilers named for the recompile step. Reusing `code-review` (via `code-review-lead`) and drawing the pitfall rubric's provenance from `coding-agent-pitfalls` are dependency relationships, not sibling references. Never route to, mention, or delegate to any other suite skill.
 - **No cost/token machinery.** There is no token, cost, budget, metering, or ceiling anywhere. All bounds are progress-based; do not add resource accounting even as a convenience.
 - **All artifacts are current-state.** The plan, the reports, and the worker-generated code describe the system as it is — no before/after, no "we changed," no process narration. Task branches read as final state, squashed and tidy, not as the journey that produced them.
 - **Agents are model- and effort-pinned per role.** Each agent's frontmatter sets the `model` (Opus or Sonnet 5) and the `effort` tier its role's reasoning demand warrants, rather than inheriting the session model. Opus runs the roles whose judgment is load-bearing and costly to get wrong — the plan-lead and plan-reviewer, the intake gate, the correctness-verifier, the pitfall-auditor, and the delivery-lead. Sonnet 5 runs the roles that are mechanical or tightly bounded by their contract — the scout, the worker, the integrator, the task-lead, and the review-and-refine-lead. `effort` tiers the reasoning budget within each.

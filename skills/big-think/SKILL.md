@@ -52,7 +52,7 @@ big-think runs in **one** posture, chosen at triage. The posture parameterizes e
 
 | Posture | Trigger | First-diamond target — the *locked understanding* | Defer instead to |
 |---|---|---|---|
-| **diagnose** | "why is this happening?" — an observed failure with an unknown cause (bug, regression, outage, perf cliff) | a **root cause** | a long interactive debugging dialogue → grillmaster |
+| **diagnose** | "why is this happening?" — an observed failure with an unknown cause (bug, regression, outage, perf cliff) | a **root cause** | a long interactive debugging dialogue → spec-grill |
 | **frame** | "I must invent an approach / I don't know how to even start / this seems intractable" | a **precise problem spec + tractability/crux analysis** | turning the chosen approach into a buildable implementation spec |
 | **orient** | "I've been handed a problem in a domain I don't know" | a **validated mental model + operational map** of the domain | a cited report on the domain → deep-research |
 | **survey** | "how is this solved with current best-practice / SotA?" | a **bounded, decision-serving landscape** of approach families + fit criteria | a comprehensive cited report → deep-research |

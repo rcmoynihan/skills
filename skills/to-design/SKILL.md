@@ -1,21 +1,21 @@
 ---
 name: to-design
-description: Turn a completed grillmaster session + its to-spec PRD into a single, complete technical design document in the plugin's temp dir — the *how* that realizes the spec's *what*: architecture, data/state, interfaces, execution, cross-cutting concerns, deployment/rollout, technical decisions (ADRs), risks, verification, and readiness. Invariants first; synthesis only — no re-interview, no invented architecture.
-argument-hint: "(optional) path to a spec file or a grillmaster run dir; blank uses the most recent spec + its grill run"
+description: Turn a completed design-grill session + its to-spec PRD into a single, complete technical design document in the grill run dir — the *how* that realizes the spec's *what*: architecture, data/state, interfaces, execution, cross-cutting concerns, deployment/rollout, technical decisions (ADRs), risks, verification, and readiness. Invariants first; synthesis only — no re-interview, no invented architecture.
+argument-hint: "(optional) path to a grill run dir or spec file; blank uses the most recent run"
 disable-model-invocation: true
 ---
 
 # to-design
 
-Turn what a grilling settled — plus the product PRD that `to-spec` produced from it — into one durable **technical design document**: the *how* that realizes the spec's *what*. Where `to-spec` says what the system does and why, `to-design` says how it is built, run, and shipped so that it honors the spec.
+Turn what the design grilling settled — plus the product PRD that `to-spec` produced before it — into one durable **technical design document**: the *how* that realizes the spec's *what*. Where `to-spec` says what the system does and why, `to-design` says how it is built, run, and shipped so that it honors the spec.
 
-This is the second conversion step in the chain: **grillmaster** (grill → understanding) → **to-spec** (product PRD) → **to-design** (technical design doc). It is a companion to the spec, not a replacement — it references the spec's ids, never restates its promises.
+This is the final conversion step in the chain: **spec-grill** (product grill → understanding) → **to-spec** (product PRD) → **design-grill** (technical grill → understanding) → **to-design** (technical design doc). It is a companion to the spec, not a replacement — it references the spec's ids, never restates its promises. Throughout, "the grill" means the **design-grill lane** of the run.
 
 **Synthesize, do not interview.** The grill did the asking and the spec captured the *what*. Build the design from what was actually decided — never re-open the interview, and never invent architecture the grill didn't reach. A concern the grill left unexplored becomes an Open Question, not a guess.
 
-The output is a single markdown file in the plugin's temp dir, and it **leads with the invariants**.
+The output is a single markdown file in the run dir, and it **leads with the invariants**.
 
-**You are the orchestrator and the sole author.** You write the design in the main thread, then harden it with a small panel of read-only critics that edit nothing: an ad-hoc **Scout** for facts, and two opposing critics — an **Adversary** (*is it enough?*) and an **Auditor** (*is it faithful, and no more?*) — run over the draft in a two-round loop. The design doc, the spec, and the grill run are the shared state; there is no separate run directory.
+**You are the orchestrator and the sole author.** You write the design in the main thread, then harden it with a small panel of read-only critics that edit nothing: an ad-hoc **Scout** for facts, and two opposing critics — an **Adversary** (*is it enough?*) and an **Auditor** (*is it faithful, and no more?*) — run over the draft in a two-round loop. The design doc, the spec, and the design lane are the shared state; this skill adds no run directory of its own.
 
 ## The boundary: what belongs here vs in the spec
 
@@ -29,7 +29,7 @@ The output is a single markdown file in the plugin's temp dir, and it **leads wi
 
 - **Invariants first, literally.** Write the `## 0. Design Invariants & Constraints` block before any other section. Reasoning the binding constraints first is what keeps every component, contract, and decision below them consistent. Don't start §1 until §0 exists.
 - **Required spine vs conditional sections.** Some sections are **cross-cutting and always present** — the frame every design doc needs, marked `[required]` below. The rest are **conditional**: include them only when the spec's scope and domain call for them, using each section's *include-when* trigger. You must **consciously decide each conditional section in or out** — "optional" means *deliberately judged*, never *silently forgotten*; the author self-check (step 5) is where you confirm each call. A stateless CLI has no deployment section; a non-AI tool has no AI section; a pure library has no operations section — omit what the domain doesn't have.
-- **Posture dials depth, not the spine.** Read the run's `posture` (from the grill's Position block or the spec frontmatter — never re-derive it). Posture sets how hard each included section is pressed and the bar for "resolved enough": a `poc` design resolves the core path and honestly marks the rest; a `new-system` design isn't done until security, tenancy, data-lifecycle, DR, SLOs, capacity/cost, and dependencies are all pressed. Posture never removes a required section.
+- **Posture dials depth, not the spine.** Read the run's `posture` from the spec frontmatter (the design lane's Position block carries the same inherited value — never re-derive it). Posture sets how hard each included section is pressed and the bar for "resolved enough": a `poc` design resolves the core path and honestly marks the rest; a `new-system` design isn't done until security, tenancy, data-lifecycle, DR, SLOs, capacity/cost, and dependencies are all pressed. Posture never removes a required section.
 - **Never invent.** Every component, contract, `DD-`, and `RISK-` traces to something the grill settled, the spec states, or the user said — else it's tagged `(assumed — confirm)`. An included section with nothing settled uses the empty-state vocabulary below; it is never filled with best-practice boilerplate.
 - **Four-state empty vocabulary.** A section (or subsection) with no settled content says exactly one of:
   - `N/A — <reason>` — the concern categorically doesn't apply to this system.
@@ -42,38 +42,38 @@ The output is a single markdown file in the plugin's temp dir, and it **leads wi
 - **No change narration.** The design describes the system as it is to be built, for a reader who never saw the grill. On a re-run, overwrite the file so it reads as written fresh.
 - **The file is the deliverable.** Write it, then return only the absolute path + a 1–2 line summary (topic, posture, # decisions, # risks, # open questions, and **partial** if material areas are unresolved). Never paste the body into chat.
 - **Dispatch the hardening panel by name.** The plugin ships four workers: `to-design-scout` (ad-hoc, to ground a fact), `to-design-auditor` and `to-design-adversary` (the two-critic hardening loop), and `to-design-alternatives` (only when a critic flags a hand-waved ADR). Dispatch them with the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. You write the document; they only advise.
-- **Critics are read-only; you are the pen — and there is no run directory.** Every critic returns a brief and edits nothing; you fold its findings in. The shared state is the **in-progress design doc, the spec, and the grill run** — no `.runs/` scaffolding. Every dispatch prompt carries the **dispatch contract**: the design-doc path, the spec path, the grill run dir, the **§0 Locked Invariants inline verbatim** (paraphrase is where intent inverts), the posture, and the critic's one job.
+- **Critics are read-only; you are the pen — and this skill adds no scaffolding of its own.** Every critic returns a brief and edits nothing; you fold its findings in. The shared state is the **in-progress design doc, the spec, and the design lane** — nothing else. Every dispatch prompt carries the **dispatch contract**: the design-doc path, the spec path (`grill-<slug>/spec.md`), the design lane dir (`grill-<slug>/design/`), the **§0 Locked Invariants inline verbatim** (paraphrase is where intent inverts), the posture, and the critic's one job.
 - **Subtract by default; restraint is first-class.** The two critics are opposing forces — the Adversary asks *is it enough?* and pushes complexity up; the Auditor asks *is it faithful, and no more?* and pushes it down. "Always add, never subtract" is the design's natural drift, so restraint is a co-equal mandate, not a footnote: every mechanism must earn its place against the posture, and an addition with no posture-justified need is cut, not kept.
-- **Essentially non-interactive.** This is a conversion step, not an interview — there is one user gate, at the end. Unresolved load-bearing calls are reported as **partial** / **build-blocked**, never re-interviewed (that is Grillmaster's job). The one exception: if hardening shows the *spec* is wrong, stop and surface it rather than patch around it.
+- **Essentially non-interactive.** This is a conversion step, not an interview — there is one user gate, at the end. Unresolved load-bearing calls are reported as **partial** / **build-blocked**, never re-interviewed (that is design-grill's job). The one exception: if hardening shows the *spec* is wrong, stop and surface it rather than patch around it.
 - **Posture-gated fan-out is a future extension.** At `new-system` the Adversary could split into parallel security / reliability / data-migration specialists (as the code-review panel does); today it runs as one whole-doc critic. Do not fan it out now.
 
 ## Find the inputs
 
-`to-design` reads **two** inputs: the finished spec and the grill run behind it.
+`to-design` reads **two** inputs from the chain's run dir: the finished spec and the design lane behind it.
 
 ```bash
-ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/spec-*.md 2>/dev/null         # the to-spec PRDs
-ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grillmaster-*/ 2>/dev/null     # the grill runs
+ls -dt "${TMPDIR:-/tmp}"/code-goblin-pro/grill-*/ 2>/dev/null
 ```
 
-- If the argument names a spec file or a grill run dir, use it. Otherwise take the most recent spec and its matching grill run (same `<slug>`).
-- Read the spec in full — it is your source for the invariants, requirements, acceptance criteria, and product decisions you must honor and reference by id.
-- Read the grill run's three files — `initial-agenda.md`, `living-agenda.md` (statuses + the `posture`), `conversation-path.md` (the decision trail) — for the technical decisions the grill settled and the concerns it left open.
-- Also draw on this conversation. **Standalone fallback:** if no spec exists, synthesize from the grill run (or the conversation) alone and label the document **partial — no spec**; do not fabricate the spec's promises.
+- If the argument names a run dir or a spec file, use it. Otherwise take the most recent run matching the topic.
+- Read `grill-<slug>/spec.md` in full — it is your source for the invariants, requirements, acceptance criteria, product decisions, and the `posture` you must honor and reference by id.
+- Read the design lane's three files — `design/initial-agenda.md` (including its Locked block), `design/living-agenda.md` (statuses + the Locked block's current state), `design/conversation-path.md` (the decision trail) — for the technical decisions the grill settled and the concerns it left open.
+- **Amendment guard:** if the design lane's Locked block carries any entry tagged `(amended)` whose decision isn't reflected in `spec.md`, **stop** and have the user re-run `/to-spec` first — never compile against a stale spec.
+- Also draw on this conversation. **Missing an input → stop and route**, never fabricate: no `spec.md` → `/to-spec` (or `/spec-grill` if the product side was never grilled); no `design/` lane → `/design-grill`. There is no standalone mode — a design doc without its settled inputs would be invented architecture.
 
 ## Process
 
 Steps 1–5 are yours alone — you locate, frame, and draft. Steps 6–7 add the read-only critics that harden what you wrote.
 
-1. **Locate & read** the spec + grill run (above), or fall back to the conversation.
+1. **Locate & read** the spec + design lane (above).
 2. **Read the posture** and write **§0 first** — carry every spec `INV-`/`CON-` forward by id, add the technical non-negotiables the grill settled, and map each to where it's enforced (a section/decision) or to an Open Question. These are the **Locked Design Invariants** that travel verbatim to every critic.
-3. **Decide the section set.** Keep every `[required]` section; for each `[conditional]` one, decide in or out from the spec's scope and domain using its include-when trigger.
-4. **Route the material:** spec `REQ-`/`AC-` → the section that realizes them (trace by id in §21); grill `[resolved]` technical decisions → the body + §15 ADRs; grill `[unvisited]`/`[paused]` technical items → §18; grill `[dropped]` → §20; technical decisions moved out of the spec → §15.
+3. **Decide the section set.** Keep every `[required]` section; for each `[conditional]` one, decide in or out from the spec's scope and domain using its include-when trigger. The design lane's agenda areas mirror this template's spine, so its area set is a strong signal for the conditional calls.
+4. **Route the material:** spec `REQ-`/`AC-` → the section that realizes them (trace by id in §21); design-lane `[resolved]` decisions → the body + §15 ADRs; `[unvisited]`/`[paused]` items (including `[paused: blocked-on-spec]`) → §18; `[dropped]` → §20. The spec's **Carried-Forward Technical Notes** are non-binding context — an item there enters the design only through its design-lane agenda status, never directly.
 5. **Draft the sections in order**, each grounded and consistent with §0, at the posture's depth, using the empty-state vocabulary where nothing is settled. Dispatch `to-design-scout` **ad-hoc** whenever a load-bearing fact would otherwise be a guess, and fold its finding in with `(verified: <url-or-path>)`. Then run the cheap **author self-check**: re-read §0, confirm each conditional section's in/out call, and run the 7-slice coverage self-check (external contracts / AI / data & state / internal architecture / failure modes & ops / verification — *behavior* is the spec's territory) — catch the obvious before spending critics.
 6. **Hardening round 1.** Dispatch `to-design-auditor` and `to-design-adversary` **in parallel** (one message), each with the dispatch contract. If either flags a hand-waved ADR, dispatch `to-design-alternatives` for that one `DD-`. Then revise the doc, triaging every finding by the rules below.
 7. **Hardening round 2.** Re-dispatch the same two critics on the **revised** doc — the independent check must see the hardened version, not the first draft — and revise again. Two rounds total. A finding that survives round 2 as VIOLATED or blocking is resolved or explicitly routed to §18/§16 before you finish.
 8. **Final pass.** Fill §21 traceability; delete or convert any design element that traces to nothing; confirm every component/contract/`DD-` still honors §0.
-9. **Save & report.** Write to `${TMPDIR:-/tmp}/code-goblin-pro/design-<slug>.md` (same `<slug>` as the spec). Return the absolute path + the 1–2 line summary; say **partial** / **build-blocked** if load-bearing questions remain.
+9. **Save & report.** Write to `grill-<slug>/design.md` in the run dir. Return the absolute path + the 1–2 line summary; say **partial** / **build-blocked** if load-bearing questions remain.
 
 **Triaging a finding** (steps 6–7) — this is what keeps *hardened* compatible with *never invent*:
 
@@ -94,8 +94,8 @@ Write the file in this shape. `[required]` sections always appear; `[conditional
 title: <what's being built — technical>
 status: draft
 date_created: <YYYY-MM-DD>
-source: <grill run dir, or "conversation">
-spec_source: <spec file path, or "none — partial">
+source: <grill run dir>
+spec_source: <grill-<slug>/spec.md>
 posture: <poc | internal-tool | product-feature | new-system>
 tags: [<relevant tags>]
 ---
@@ -218,6 +218,6 @@ Every spec id maps to the design that realizes it; a design element tracing to n
 
 ## 22. Related / Further Reading  [required]
 
-The spec file, the grill run artifacts (initial-agenda / living-agenda / conversation-path), and any prior-art docs.
+The spec (`grill-<slug>/spec.md`), the design lane's artifacts (initial-agenda / living-agenda / conversation-path), and any prior-art docs.
 ```
 </design-template>

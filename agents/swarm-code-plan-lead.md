@@ -44,7 +44,7 @@ Dispatch `swarm-code-intake-gate` to apply the governing under-specification tes
 - **The spec path**, the **`scout-inventory.md` path**, and the repository root.
 - **Return contract** — `PROCEED` with a one-sentence basis, or `STOP` with the register content (the STOP verdict and one structured entry per blocking gap/contradiction, per the register schema) and a count of blocking entries.
 
-The intake gate is read-only and writes nothing — it hands the register content back to you the same way the scout hands back its brief. **On STOP** — Phase 1 ends here. Do not plan. Write `ambiguity-register.md` to the run dir from the register content the gate returned, then return to the main thread: `STOP`, that `ambiguity-register.md` path, and a one-line summary naming the routing target(s) (to-spec / to-design / grillmaster). No source is written; the gate never edited the spec, and neither do you.
+The intake gate is read-only and writes nothing — it hands the register content back to you the same way the scout hands back its brief. **On STOP** — Phase 1 ends here. Do not plan. Write `ambiguity-register.md` to the run dir from the register content the gate returned, then return to the main thread: `STOP`, that `ambiguity-register.md` path, and a one-line summary naming the routing target(s) (spec-grill / design-grill). No source is written; the gate never edited the spec, and neither do you.
 
 **On PROCEED** — continue to Step 3.
 

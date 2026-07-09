@@ -59,14 +59,13 @@ entries:
     unclear: <the requirement or decision that is missing or contradictory>
     subtype: gap | contradiction
     why_blocks: <why implementing now would mean guessing about the spec, its invariants, or its requirements — reference the specific code/convention you checked and found no inferable answer>
-    route: to-spec | to-design | grillmaster
+    route: spec-grill | design-grill
 ```
 
 Route each entry by what is missing:
 
-- **`to-spec`** — the *what* is missing: a requirement, behavior, or acceptance criterion the spec never stated.
-- **`to-design`** — the *how* is missing: a mechanism or architectural decision the spec assumes but does not settle.
-- **`grillmaster`** — the idea itself needs a rethink: the gaps are deep or contradictory enough that the concept, not the spec, is under-baked.
+- **`spec-grill`** — the *what* is missing: a product requirement, behavior, or acceptance criterion no settled input states — including the deep case where the gaps are contradictory enough that the concept itself needs re-grilling. (After the grill, `/to-spec` recompiles the spec.)
+- **`design-grill`** — the *how* is missing: a mechanism or architectural decision the spec assumes but nothing settles. (After the grill, `/to-design` recompiles the design.)
 
 Never route to any other skill. Return the register content and the count directly to the plan-lead, which writes `ambiguity-register.md` from what you hand back.
 
