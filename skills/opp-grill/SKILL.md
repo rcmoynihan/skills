@@ -56,7 +56,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/grill-<slug>/
 
 ## The three state files
 
-**`living-agenda.md`** — the working map: a **Position block** rewritten wholesale each turn — `stakes`, `phase` (`framing` or `direction`: which half of the run this is, so a resume is never ambiguous), `active`, `resume-target`, `turns-since-node-change`, `last-facilitator` — above the agenda body. Body items are status token + ID + question, statuses **`unvisited` / `active` / `paused` / `resolved` / `dropped`**; a `resolved` item carries an **evidence grade** (below) in the slot where the siblings carry a depth tag. Given and claim annotations ride on nodes (below). New items get a trailing `— reason added: <standing rationale>`.
+**`living-agenda.md`** — the working map: a **Position block** rewritten wholesale each turn — `stakes`, `phase` (`framing` or `direction`: which half of the run this is, so a resume is never ambiguous), `terrain` (the terrain pack path when the run has one, else `—`), `active`, `resume-target`, `turns-since-node-change`, `last-facilitator` — above the agenda body. Body items are status token + ID + question, statuses **`unvisited` / `active` / `paused` / `resolved` / `dropped`**; a `resolved` item carries an **evidence grade** (below) in the slot where the siblings carry a depth tag. Given and claim annotations ride on nodes (below). New items get a trailing `— reason added: <standing rationale>`.
 
 **`conversation-path.md`** — the append-only turn log, the same seven columns as every lane, one row per turn:
 
@@ -85,10 +85,12 @@ Instantiate the agenda at intake yourself: one file write, no dispatch. Keep the
 
 For a pure opportunity ("X just became possible") reframe per area rather than swapping skeletons: B → evidence the possibility is real and who would care; C → who gains; D → why doesn't this exist yet; E → what the opening is worth and how long it stays open.
 
+**Terrain pack at intake.** When the problem lives in an existing repo, product, or org, check for a terrain pack (`/survey-terrain`'s durable map): named by argument or the user, or found at `<repo>/.grill/terrain.md`. Hold its path in the Position block (`terrain:`). Its Internal Prior Art seeds D and, later, the adopt/buy and compose-internal candidates in H; its Constraints & Gates are F-area candidates to confirm with the user — pack facts orient but never resolve, and are never filed as conviction annotations. A stale pack gets one line ("surveyed at `<sha>`, repo has moved — orientation only"); a problem that references an existing system with no pack gets a one-sentence, non-blocking offer of `/survey-terrain` — being invoked from inside a checkout is never, by itself, the trigger.
+
 ## How to run this
 
 - **One question at a time, with your recommended answer** — here the recommendation is often *what would count as evidence* rather than the answer itself. A question answerable by a quick local read, do inline; anything heavier goes to the Scout.
-- **Two subagents, by name:** `grill-scout` (ad-hoc, heavier use than the siblings) and `grill-facilitator` (loose cadence + the mandatory gate pass). Use the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. **Every dispatch names the lane and the lane dir** — `lane: idea`, the lane dir path, plus the stakes and phase — subagents can't see this conversation. No Planner, no Tracer in this lane.
+- **Two subagents, by name:** `grill-scout` (ad-hoc, heavier use than the siblings) and `grill-facilitator` (loose cadence + the mandatory gate pass). Use the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. **Every dispatch names the lane and the lane dir** — `lane: idea`, the lane dir path, plus the stakes, the phase, and the terrain pack path when the run has one — subagents can't see this conversation. No Planner, no Tracer in this lane.
 - **You are the sole writer of all three files.** The Facilitator writes nothing — it returns exact lines you transcribe.
 - **Keep the per-turn cost near zero:** one appended log row, the Position rewrite, at most one status flip, the occasional park line or node annotation.
 - **No change narration in the agenda** — status is a field, never "was active, now paused"; the log narrates the conversation, never artifact edits.
@@ -177,7 +179,7 @@ Surface its findings to the user plainly — including the ones that argue again
 - **`defer`** — name the *specific* evidence that would reopen it; that is the brief's core.
 - **`adopt <existing thing>`** — name the residual gap the user accepts.
 
-Then summarize: the verdict; the evidence-grade mix (how much of the frame is `verified` vs `testimony` vs `assumed`); the assumptions carried; the instances recorded; what was parked (count and path); any dropped areas; and, on a `go`, the posture proposal. Finally, **offer** — don't auto-run — `/to-idea` to compile `grill-<slug>/idea.md`; on a `go`, that brief is what `/spec-grill` consumes. The grill produces understanding; converting it is the user's call.
+Then summarize: the verdict; the evidence-grade mix (how much of the frame is `verified` vs `testimony` vs `assumed`); the assumptions carried; the instances recorded; what was parked (count and path); any dropped areas; any terrain-pack corrections the run surfaced (reality moved past the pack — suggest `/survey-terrain` to refresh); and, on a `go`, the posture proposal. Finally, **offer** — don't auto-run — `/to-idea` to compile `grill-<slug>/idea.md`; on a `go`, that brief is what `/spec-grill` consumes. The grill produces understanding; converting it is the user's call.
 
 ## Templates
 
@@ -189,6 +191,7 @@ Then summarize: the verdict; the evidence-grade mix (how much of the frame is `v
 **Position**
 - stakes: <casual | team | strategic> — <optional note>
 - phase: <framing | direction>
+- terrain: <pack path, or —>
 - active: <node id, or —>
 - resume-target: <node id, or —>
 - turns-since-node-change: 0

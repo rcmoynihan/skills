@@ -42,7 +42,7 @@ The output is a single markdown file in the run dir, and it **leads with the inv
 - **No change narration.** The design describes the system as it is to be built, for a reader who never saw the grill. On a re-run, overwrite the file so it reads as written fresh.
 - **The file is the deliverable.** Write it, then return only the absolute path + a 1–2 line summary (topic, posture, # decisions, # risks, # open questions, and **partial** if material areas are unresolved). Never paste the body into chat.
 - **Dispatch the hardening panel by name.** The plugin ships four workers: `to-design-scout` (ad-hoc, to ground a fact), `to-design-auditor` and `to-design-adversary` (the two-critic hardening loop), and `to-design-alternatives` (only when a critic flags a hand-waved ADR). Dispatch them with the Agent tool (`subagent_type`); if `/agents` shows them plugin-scoped, use that form. You write the document; they only advise.
-- **Critics are read-only; you are the pen — and this skill adds no scaffolding of its own.** Every critic returns a brief and edits nothing; you fold its findings in. The shared state is the **in-progress design doc, the spec, and the design lane** — nothing else. Every dispatch prompt carries the **dispatch contract**: the design-doc path, the spec path (`grill-<slug>/spec.md`), the design lane dir (`grill-<slug>/design/`), the **§0 Locked Invariants inline verbatim** (paraphrase is where intent inverts), the posture, and the critic's one job.
+- **Critics are read-only; you are the pen — and this skill adds no scaffolding of its own.** Every critic returns a brief and edits nothing; you fold its findings in. The shared state is the **in-progress design doc, the spec, and the design lane** — nothing else. Every dispatch prompt carries the **dispatch contract**: the design-doc path, the spec path (`grill-<slug>/spec.md`), the design lane dir (`grill-<slug>/design/`), the terrain pack path when the spec's frontmatter names one (the critics and scout verify existing-system claims against it), the **§0 Locked Invariants inline verbatim** (paraphrase is where intent inverts), the posture, and the critic's one job.
 - **Subtract by default; restraint is first-class.** The two critics are opposing forces — the Adversary asks *is it enough?* and pushes complexity up; the Auditor asks *is it faithful, and no more?* and pushes it down. "Always add, never subtract" is the design's natural drift, so restraint is a co-equal mandate, not a footnote: every mechanism must earn its place against the posture, and an addition with no posture-justified need is cut, not kept.
 - **Essentially non-interactive.** This is a conversion step, not an interview — there is one user gate, at the end. Unresolved load-bearing calls are reported as **partial** / **build-blocked**, never re-interviewed (that is design-grill's job). The one exception: if hardening shows the *spec* is wrong, stop and surface it rather than patch around it.
 - **Posture-gated fan-out is a future extension.** At `new-system` the Adversary could split into parallel security / reliability / data-migration specialists (as the code-review panel does); today it runs as one whole-doc critic. Do not fan it out now.
@@ -117,11 +117,11 @@ Design goals (e.g. minimize new infra; sub-second p99) and explicit technical no
 
 ## 3. Context & Existing System  [required]
 
-What already exists and this builds on (from grill grounding), the environment it slots into, assumptions, and soft/environmental constraints (hard ones are in §0).
+What already exists and this builds on (from grill grounding; cite the terrain pack where its map supplied it), the environment it slots into, assumptions, and soft/environmental constraints (hard ones are in §0).
 
 ## 4. Dependencies & External Systems  [conditional — include when the system relies on external services, libraries, or platforms]
 
-Each dependency: what it's used for, owner, SLA/quota, failure behavior, and version/supply-chain risk.
+Each dependency: what it's used for, owner (the terrain pack's System Map records internal owners), SLA/quota, failure behavior, and version/supply-chain risk.
 
 ## 5. System Architecture  [required]
 
@@ -218,6 +218,6 @@ Every spec id maps to the design that realizes it; a design element tracing to n
 
 ## 22. Related / Further Reading  [required]
 
-The spec (`grill-<slug>/spec.md`), the design lane's artifacts (initial-agenda / living-agenda / conversation-path / givens), and any prior-art docs.
+The spec (`grill-<slug>/spec.md`), the design lane's artifacts (initial-agenda / living-agenda / conversation-path / givens), the terrain pack when the run held one, and any prior-art docs.
 ```
 </design-template>

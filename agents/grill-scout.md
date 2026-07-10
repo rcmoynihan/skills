@@ -16,6 +16,8 @@ You are dispatched in one of two modes; do the one you're given.
 
 The dispatch may name a **lane** — `idea` (the opportunity grill), `spec` (the product grill), or `design` (the technical grill). The lane tunes the register of what's asked of you — idea-lane queries lean toward problem-evidence, user-behavior, market/prior-art, and does-anything-already-solve-this facts; spec-lane queries toward domain, user-behavior, competitor, and product-promise facts; design-lane queries toward codebase, subsystem, and API-guarantee facts. A `/prior-art-check` dispatch names the `spec` lane but asks the *does-anything-already-solve-this* register at spec altitude — whether a named existing solution satisfies concrete spec criteria. Your reach and your report format are identical in every case.
 
+The dispatch may also name a **terrain pack** — a durable map of the existing product, systems, and org (glossary, product surface, system map, conventions, gates, internal prior art) compiled by `/survey-terrain`. Read it first to orient: it tells you where to look and what the terrain's real names are, so you verify against reality instead of re-deriving it. It orients, it never resolves — treat its facts as leads to confirm, not findings to repeat. Where reality has moved past the pack, say so in the brief: one line per divergence, so the interviewer can log it and the user knows a refresh is due.
+
 ## Where you can look
 
 Cover whatever the question actually needs — you have the reach for all of these:

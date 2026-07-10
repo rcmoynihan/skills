@@ -34,6 +34,7 @@ If the argument names a run dir or a spec file, use that; otherwise take the mos
 
 - **`spec.md` is the required input.** No `spec.md` in any matching run → **decline and route**: `/to-spec` to compile a spec from a finished spec grill or the conversation, or `/spec-grill` to grill one first. There is nothing to match a candidate against without it.
 - **`idea.md`, when present** (the chain started at `/opp-grill`): read its §4 *Status Quo & Prior Art* and its verdict — the opening survey's findings seed your candidate list, and an upstream `adopt` verdict is a strong prior you are now testing against the concrete spec.
+- **The terrain pack, when the spec's frontmatter names one** (`terrain:`): its System Map and Internal Prior Art & Primitives sections seed the org-internal candidate sweep and the compose-existing-internal-primitives floor candidate. The pack orients the search; every candidate still gets scored against the spec, never adopted on the pack's word.
 - **`prior-art.md` already exists** — this gate already ran. A new run is a **re-check**: state the previous verdict, warn it goes stale, and confirm before proceeding (a materially changed spec is the usual reason to re-run).
 
 The gate writes exactly one file, `grill-<slug>/prior-art.md`, at the run-dir top level alongside `idea.md` / `spec.md` / `design.md`. It creates no lane subdir.
@@ -69,7 +70,7 @@ The exit is a **user-spoken verdict**, not a score. It mirrors opp-grill's commi
 
 ## Dispatching the Scout
 
-The Scout is this gate's only researcher. Dispatch `grill-scout` with a **targeted query** and the scope to look in; parallelize by surface when it sharpens the survey — one pass for org-internal (`gh`), one for open-source, one for commercial — rather than one vague sweep. Frame each query concretely against the spec's criteria: not "what triage tools exist," but "does <candidate> support <these journeys> and honor <these invariants>; what does it cost to adopt; what does it not do." Name the lane as `spec` and pass the spec path (`grill-<slug>/spec.md`) — the Scout can't see this conversation.
+The Scout is this gate's only researcher. Dispatch `grill-scout` with a **targeted query** and the scope to look in; parallelize by surface when it sharpens the survey — one pass for org-internal (`gh`), one for open-source, one for commercial — rather than one vague sweep. Frame each query concretely against the spec's criteria: not "what triage tools exist," but "does <candidate> support <these journeys> and honor <these invariants>; what does it cost to adopt; what does it not do." Name the lane as `spec` and pass the spec path (`grill-<slug>/spec.md`), plus the terrain pack path when the spec names one — the Scout can't see this conversation.
 
 Fold each brief into the matrix. The Scout **reports terrain and does not rule on the route** — a candidate's coverage is a fact it finds; whether that coverage is *enough* is your assessment, and whether to adopt is the user's verdict. A `❓ unknown` cell is an honest output; it may become a `defer` if it's decisive.
 

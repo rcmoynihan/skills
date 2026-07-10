@@ -72,6 +72,7 @@ status: draft
 date_created: <YYYY-MM-DD>
 source: <grill run dir path, or "conversation">
 posture: <poc | internal-tool | product-feature | new-system> — <optional note>
+terrain: <terrain pack path>   # when the run held one (Position block's terrain field); omit otherwise
 tags: [<relevant tags>]
 ---
 
@@ -81,7 +82,7 @@ The problem being solved, from the user's perspective.
 
 ## 2. Solution Overview, Context & Scope
 
-The solution from the user's perspective; the context a cold reader needs — what exists today, why this is being built now, and the environment it lands in; the intended audience and key assumptions; what is in scope and, briefly, what is not.
+The solution from the user's perspective; the context a cold reader needs — what exists today, why this is being built now, and the environment it lands in (cite the terrain pack where its map supplied this); the intended audience and key assumptions; what is in scope and, briefly, what is not.
 
 ## 3. Invariants & Non-Negotiables
 
@@ -144,6 +145,6 @@ How to verify a built solution meets this spec's *what* — the product-level, b
 
 ## 15. Related / Further Reading
 
-Paths to the spec lane's artifacts (initial-agenda / living-agenda / conversation-path / technical-parking-lot / givens), the companion `grill-<slug>/design.md` once produced, and any other relevant docs.
+Paths to the spec lane's artifacts (initial-agenda / living-agenda / conversation-path / technical-parking-lot / givens), the terrain pack when the run held one, the companion `grill-<slug>/design.md` once produced, and any other relevant docs.
 ```
 </spec-template>

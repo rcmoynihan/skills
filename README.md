@@ -30,7 +30,9 @@ ${TMPDIR:-/tmp}/code-goblin-pro/
 `${TMPDIR:-/tmp}` is the base (honoring a per-user `$TMPDIR` on macOS, falling back to `/tmp`); the
 `code-goblin-pro/` subdir namespaces every skill's files in one place, keyed by run (e.g.
 `grill-<slug>/`, `swarm-code-<date>-<slug>/`, `pr-<ref>-review.md`). Any new skill that writes
-scratch or deliverable files uses this dir.
+scratch or deliverable files uses this dir. One deliberate exception: `survey-terrain` writes its
+terrain pack to `<repo>/.grill/terrain.md` (gitignored) — the pack must outlive tmp cleanup and be
+discoverable per repo.
 
 ## Skills
 
@@ -42,6 +44,7 @@ scratch or deliverable files uses this dir.
 | `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the plugin's temp dir. |
 | `post-review-comments` | `/post-review-comments` | Post a finished code-review report's findings to the PR — strongly inline, top-level only for a genuine cross-cutting concern, never a summary. |
 | `review-and-comment` | `/review-and-comment` | Run `code-review` then `post-review-comments` back-to-back, hands-off — review a branch/PR and post the findings with no report review in between. |
+| `survey-terrain` | `/survey-terrain` | Survey an existing product/codebase/org into a durable terrain pack (`<repo>/.grill/terrain.md`) that the grill chain consumes presence-based for brownfield runs. |
 | `hello-world` | `hello world` | Minimal smoke test that confirms the plugin is installed. |
 
 `hello-world` is model-invocable — Claude pulls it in automatically when relevant. The rest set

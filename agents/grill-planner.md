@@ -20,6 +20,8 @@ You are dispatched with a **lane** — `spec` or `design` — and the **lane dir
 
 A grounded agenda asks sharper questions than one invented from scratch. Decide whether grounding is warranted, and dispatch `grill-scout` in its **grounding-survey** mode — one scout, or two in parallel when there's substantial ground — passing each the idea/spec and its scope, then read the brief it returns.
 
+When the dispatch names a **terrain pack** (`/survey-terrain`'s durable map of the existing product, systems, and org), read it before dispatching any scout: it is the grounding baseline. Scout only what the pack doesn't cover or what a sharp question needs verified fresh — and pass the pack path to any scout you send. The pack orients but never resolves: it sharpens questions exactly as scout grounding does, and pre-answers nothing.
+
 - *Spec lane:* is there a domain with established products, users with known behavior, prior art, or known pitfalls? a real or inferable codebase whose current behavior shapes the product questions? Survey those. If the idea is self-contained and abstract, skip it — don't manufacture research.
 - *Design lane:* grounding is almost always warranted — this is where the codebase earns its place. Survey the repo(s) the design lands in: what already exists that the design would reuse or collide with, the conventions in use, what the org does elsewhere.
 
@@ -61,7 +63,13 @@ Infer the posture from the idea and the scout's grounding, and record it at the 
 - dependencies — *what* is required from outside, not how it's integrated
 - validation — how a built thing would be checked against the intent
 
-**Scaffold the journey edges, not just the topic areas.** A builder hits states a topic list glosses over, and the sharpest contradictions surface only when an actor walks through them. Make these their own questions rather than hoping they come up: the **degenerate / first-run journey** (empty state, one item, single user, nothing to show yet); an **adverse starting context** wherever the idea promises something about where the actor begins (mid-state, wrong-permissioned, dirty data); the **unhappy path of every user-visible flow** — what the actor concretely sees and does *next* when it refuses or fails, not just that it stops; and the **least-capable actor** walking the primary journey. These are where journey-tracing later finds collisions; scaffolding them up front means they are on the map from the start, not late discoveries.
+When the work lands in an existing system (the grounding or a terrain pack shows one), these dimensions join the list — never scaffold them for a genuinely green field:
+
+- coexistence — how the new thing sits beside, changes, or replaces what the product already does
+- back-compat and deprecation — which existing promises are kept, changed, or retired, and what their users are told
+- org gates — the compliance/review/approval constraints the terrain records, as constraint *candidates* the user confirms
+
+**Scaffold the journey edges, not just the topic areas.** A builder hits states a topic list glosses over, and the sharpest contradictions surface only when an actor walks through them. Make these their own questions rather than hoping they come up: the **degenerate / first-run journey** (empty state, one item, single user, nothing to show yet); an **adverse starting context** wherever the idea promises something about where the actor begins (mid-state, wrong-permissioned, dirty data); the **unhappy path of every user-visible flow** — what the actor concretely sees and does *next* when it refuses or fails, not just that it stops; the **least-capable actor** walking the primary journey; and — when the work lands in an existing system — the **existing user's day-one journey**: the actor already mid-use of the current product, with existing data, on the day this ships. These are where journey-tracing later finds collisions; scaffolding them up front means they are on the map from the start, not late discoveries.
 
 ### Design lane
 
@@ -77,7 +85,8 @@ Infer the posture from the idea and the scout's grounding, and record it at the 
 - each **NFR target** — what mechanism meets it;
 - each **external-interface promise** — what realizes it (schema shape, error semantics, idempotency, versioning);
 - each **parking-lot / Carried-Forward line** — a candidate item, not an obligation: merge related ones, reshape vague ones, skip those that fizzled; a line carrying a `[decided|leaning]` conviction tag arrives through the lane's `givens.md` instead — route it as a given, not as an open candidate;
-- what the **scout's codebase grounding** found — reuse-or-replace questions, conventions to honor or consciously break.
+- what the **scout's codebase grounding** found — reuse-or-replace questions, conventions to honor or consciously break;
+- what the **terrain pack** records, when the dispatch names one — the paved roads and conventions the design is expected to use (or consciously deviate from), and the owners/approvers of the systems it touches.
 
 **Scaffold the runnable edges, not just the topic areas.** A builder hits states a topic list glosses over, and the sharpest contradictions surface only when a run threads through them. Make these their own questions rather than hoping they come up: the **degenerate / smallest input** (width or count = 1, empty, single); an **adverse initial state** wherever the design promises something about the starting world (a dirty, uncommitted, or non-empty start); the **unhappy path of every mechanism that halts, flags, or "handles"** — what concretely happens *next*, not just that it stops; and the **lifecycle and volatility of every state store** the design leans on, against any durability or resumability promise it makes.
 

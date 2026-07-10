@@ -65,6 +65,7 @@ source: <grill run dir path, or "conversation">
 stakes: <casual | team | strategic> — <optional note>
 verdict: <go <direction, one line> | no-go | defer | adopt <tool> | undecided>
 posture_proposal: <poc | internal-tool | product-feature | new-system> — <note>   # go only; omit otherwise
+terrain: <terrain pack path>   # when the run held one (Position block's terrain field); omit otherwise
 tags: [<relevant tags>]
 ---
 
@@ -86,7 +87,8 @@ Who specifically is affected, what it costs each, how often.
 ## 4. Status Quo & Prior Art
 
 What happens today, why the workarounds fail, and what already exists that addresses this
-(with sources when the Scout found them).
+(with sources when the Scout found them; cite the terrain pack where its map supplied the
+status quo or internal prior art).
 
 ## 5. Value & Appetite
 
@@ -122,7 +124,8 @@ is empty.
 
 ## 11. Related
 
-Paths to the idea lane's artifacts (living-agenda / conversation-path / product-parking-lot)
-and the downstream `grill-<slug>/spec.md` once produced.
+Paths to the idea lane's artifacts (living-agenda / conversation-path / product-parking-lot),
+the terrain pack when the run held one, and the downstream `grill-<slug>/spec.md` once
+produced.
 ```
 </brief-template>
