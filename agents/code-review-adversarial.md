@@ -46,6 +46,7 @@ Trace interactions across component boundaries where each component is correct i
 - **Shared state mutations** -- two components read and write the same state (database row, cache key, global variable) without coordination. Each works correctly alone but they corrupt each other's work.
 - **Ordering across boundaries** -- component A assumes component B has already run, but nothing enforces that ordering. Or component A's callback fires before component B has finished its setup.
 - **Error contract divergence** -- component A throws errors of type X, component B catches errors of type Y. The error propagates uncaught.
+- **Shared-source-of-truth divergence** -- multiple consumers derive behavior from one declarative table, registry, or config, and a gate, flag, or filter enforced by one consumer is silently missing in another. When a diff adds a rule to a shared table, trace every consumer and confirm each honors it -- a gate applied by one surface and dropped by another passes both components' isolated tests.
 
 ### 3. Cascade construction
 

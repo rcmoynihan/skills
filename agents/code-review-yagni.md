@@ -18,7 +18,7 @@ You do not argue for bare-minimum code at any cost. You argue against complexity
 ### Unused flexibility
 
 - Interfaces, base classes, factories, adapters, registries, plugin systems, strategy maps, or provider abstractions with one real implementation and no current second consumer.
-- Configuration knobs, environment variables, feature flags, mode switches, or generalized policy objects that are not required by the present behavior.
+- Configuration knobs, environment variables, feature flags, mode switches, generalized policy objects, or a function parameter that is accepted but never read — not required by the present behavior. An ignored parameter is also a drift trap: call sites that pass it and those that omit it agree only until something starts honoring it.
 - Generic parsers, runners, orchestration layers, or state machines where a direct function, table, or simple branch would express the current behavior.
 - Compatibility shims, dual paths, or versioned names for flows that are not actually supported in parallel by the codebase.
 
