@@ -19,8 +19,8 @@ them in the manifest.
 
 ## Where skills write artifacts
 
-Skills that produce artifacts — review reports, PR response plans, grill / swarm-code /
-big-think run state, specs, and design docs — write them to a single dedicated dir under the OS
+Skills that produce artifacts — review reports, PR response plans, grill / swarm-code
+run state, specs, and design docs — write them to a single dedicated dir under the OS
 temp dir:
 
 ```
@@ -39,7 +39,6 @@ scratch or deliverable files uses this dir.
 | `drive-claude-code` | `/drive-claude-code` | Delegate coding tasks to the Claude Code CLI from the shell. |
 | `drive-codex` | `/drive-codex` | Delegate coding tasks to the OpenAI Codex CLI (`codex exec`). |
 | `handoff` | `/handoff` | Compact the current conversation into a handoff doc for another agent. |
-| `big-think` | `/big-think` | Understanding-first thinking harness — triage a hard problem into a posture (diagnose / frame / orient / survey / decide), fan out lenses to build a locked understanding through a hard Understanding Gate, then diverge on approaches and converge on a recommended decision record. |
 | `code-review` | `/code-review` | Multi-persona review of a branch/PR — a review-lead spawns always-on plus diff-warranted reviewer subagents in parallel and writes a markdown report to the plugin's temp dir. |
 | `post-review-comments` | `/post-review-comments` | Post a finished code-review report's findings to the PR — strongly inline, top-level only for a genuine cross-cutting concern, never a summary. |
 | `review-and-comment` | `/review-and-comment` | Run `code-review` then `post-review-comments` back-to-back, hands-off — review a branch/PR and post the findings with no report review in between. |
@@ -50,9 +49,7 @@ scratch or deliverable files uses this dir.
 command.
 
 `code-review` ships the `code-review-*` agents that the skill dispatches by name: the skill spawns
-`code-review-lead`, which spawns the reviewer-persona workers as its own children. `big-think` ships
-the `big-think-*` workers (`analyst`, `scout`, `red-team`, `idea`,
-`premortem`) that its main-thread orchestrator dispatches by name across the two diamonds.
+`code-review-lead`, which spawns the reviewer-persona workers as its own children.
 
 ## Adding a skill
 
