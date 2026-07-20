@@ -43,7 +43,7 @@ When drift is present, emit a **P1** finding on the affected dump path with `aut
 - **Orphaned references** — after drop/rename, search serializers, jobs, admin, tasks, `includes`/`joins` for stale columns or associations.
 - **Broken dual-write** — a transition period requires both old and new columns populated; rollback otherwise sees NULLs.
 - **Missing transaction boundaries** — multi-table backfills without appropriate transaction scope.
-- **Hot-table index changes** — large-table indexes without concurrent/online creation where available.
+- **Hot-table index changes** — large-table indexes without concurrent/online creation where available, and lock-acquiring DDL (FK creation, ALTERs) on a hot table without a lock_timeout/statement_timeout so a blocked lock fails fast instead of head-of-line-blocking writes.
 - **Silent data loss** — `text` → `varchar(n)` truncation, float → integer precision loss.
 
 ## Verification & observability
