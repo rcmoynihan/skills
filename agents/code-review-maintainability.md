@@ -34,7 +34,7 @@ You are a structural code-quality reviewer. Your job is to catch changes that ma
 ### Typed languages (TypeScript, Python type hints, etc.)
 
 - **Type safety holes** — new `any`, `@ts-ignore`, unchecked `as` casts, `unknown as Foo`, nullable flows without narrowing when the invariant is knowable.
-- **Ad-hoc object shapes** — loosely typed records where a shared contract or explicit model would simplify control flow.
+- **Ad-hoc object shapes** — loosely typed records where a shared contract or explicit model would simplify control flow, or a consumer that reads a peer module's serialized model by inline string keys instead of referencing the owning type — so a field rename on the model drifts the consumer silently.
 
 ## Severity guidance
 
