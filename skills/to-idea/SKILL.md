@@ -20,7 +20,7 @@ The brief owns the problem space plus one decision at concept altitude. The test
 ## How to run this
 
 - **Never invent.** Every statement traces to something the grill settled, the Scout found, or the user said. An inference needed for coherence is tagged `(assumed — confirm)` — never stated as settled.
-- **Preserve the evidence grades.** Every claim in §2 keeps its grade (`verified` / `testimony` / `assumed`) and, where one exists, its recorded instance or source. An all-testimony frame says so plainly near the top — the grade mix is information, not embarrassment.
+- **Preserve the evidence grades.** Every claim in §2 keeps its grade (`verified` / `testimony` / `assumed`) and, where one exists, its recorded instance or source. An all-testimony frame says so plainly near the top — the grade mix is information, not embarrassment. `(auto)` closes are ordinary resolutions — the veto digest was the user's sanction; compile them grades-preserved and strip the marker.
 - **Honest about gaps.** Unvisited, paused, and dropped concerns become entries in §9 with their reason; don't paper over an untouched area.
 - **Self-contained for a cold reader.** On a `go`, the brief is spec-grill's primary input, so it carries its own context: the actors, the status quo, the instances, the stakes.
 - **No change narration.** The brief describes the opportunity and the decision as they stand, for a reader who never saw the grill. On a re-run, overwrite so it reads as written fresh.

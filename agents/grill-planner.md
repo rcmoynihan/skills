@@ -31,6 +31,8 @@ Fold what the scout found into the agenda wherever it sharpens a question: an ex
 
 Decompose the territory into broad **concern areas**, and under each, the specific questions worth resolving. This is a map of where to dig, not a rote checklist — drop the dimensions that don't apply, add the ones the territory demands.
 
+**Scale the map to the task.** Size the agenda to the **delta** — what this run must newly decide — never to the surrounding system. Guidance bands, not quotas: a small change or fix wants ~3–5 areas and ~8–15 items; a scoped feature ~5–8 areas and ~15–30 items; a new product or system the full applicable spine. When torn between bands, take the smaller: growing the map is a paved road (inline nodes, a Facilitator-sanctioned area, your own re-dispatch), while shrinking an over-scaffolded one takes a Facilitator ruling per drop. Scale governs **breadth** — which areas exist and how finely their questions split; posture governs **depth** and still only ever *adds* the areas its rigor demands. Record the read directly under the posture line in `initial-agenda.md` as `**Scale (read):** <small change | feature | system> — <one line sizing the delta>` — informational, the Facilitator's baseline for judging breadth; the user never confirms it.
+
 **Order for leverage, foundational first.** The agenda's order is the interview's default walk order — sequence it deliberately. Put the concerns other decisions depend on ahead of concerns that only make sense once those are settled. Within an area, put a question whose answer constrains later questions before the questions it constrains. When two concerns are independent, the higher-leverage one — the decision that reshapes the most others — goes first.
 
 **Never impute decisions.** Every item is a *question to resolve*, never a pre-filled answer. If you have a hunch about the answer, that belongs to the interview, not the agenda — phrase the item as the open question and flag any inference explicitly rather than baking it in as settled. An agenda that pre-answers its own questions has converged before the grilling began. The one piece of ground that is not imputation is a user-supplied given (below): it seeds the interview's recommended answer, and the item stays an open question.
@@ -48,20 +50,18 @@ Decompose the territory into broad **concern areas**, and under each, the specif
 
 Infer the posture from the idea and the scout's grounding, and record it at the very top of `initial-agenda.md` as `**Posture (proposed):** <rung> — <optional note>`, the note carrying nuance a bare rung misses. **Propose it; never assume it.** The interview confirms it as its opening move. When the intended tier is genuinely ambiguous, lead with a concern area `A. Posture & Scope` (`A1` the posture question, then the in/out-of-scope boundary); when it's obvious, still record it phrased so the interview can confirm or correct it. When unsure which case you're in, treat it as ambiguous. **Posture adds areas, never subtracts them** — a heavier tier pulls in the concern areas it demands, but never drop or shallow an area because the tier is lean; what's applicable is decided by the idea's actual nature. The frozen agenda stays an honest, posture-agnostic coverage baseline.
 
-**Product concern dimensions** — cover the ones that apply to this idea:
+**Concern areas mirror the `/to-spec` template's section spine**, so the eventual compile routes mechanically. Cover the dimensions this idea actually has, at the scale read's band — the § refs are the spec sections each area feeds:
 
-- what problem is actually being solved (and whether it's the real one)
-- who it's for — the actors/personas and what each needs
-- what success would look like, and how we'd know
-- what's in scope and what's explicitly out
-- the primary journeys — how each actor gets their outcome, end to end
-- behavioral requirements and the user-visible edge cases
-- the external promise — which operations/commands/events exist and what each means to its consumer
-- NFR targets — the bounds the user actually needs (never the mechanisms that meet them)
-- which assumptions are risky
-- what tradeoffs and priorities have to be called
-- dependencies — *what* is required from outside, not how it's integrated
-- validation — how a built thing would be checked against the intent
+- what problem is actually being solved, and whether it's the real one (§1)
+- solution context and scope — what's in, what's explicitly out (§2)
+- who it's for — the actors/personas and what each needs (§4)
+- the primary journeys and stories — how each actor gets their outcome, end to end (§5)
+- behavioral requirements, user-visible edge cases, and NFR targets — the bounds the user actually needs, never the mechanisms that meet them (§6)
+- the external promise — which operations/commands/events exist and what each means to its consumer (§7)
+- what tradeoffs and priorities have to be called (§9)
+- dependencies — *what* is required from outside, not how it's integrated (§10)
+- which assumptions are risky (§11)
+- validation — what success would look like, and how a built thing would be checked against the intent (§8, §14)
 
 When the work lands in an existing system (the grounding or a terrain pack shows one), these dimensions join the list — never scaffold them for a genuinely green field:
 
@@ -94,11 +94,11 @@ When the work lands in an existing system (the grounding or a terrain pack shows
 
 Write `initial-agenda.md` in the lane dir, structured as a tree:
 
-- The posture line at the top (proposed or inherited per lane), then — design lane only — the Locked block.
+- The posture line at the top (proposed or inherited per lane), the scale-read line directly under it, then — design lane only — the Locked block.
 - Lettered **concern areas** (`A`, `B`, `C`, …), each a one-line statement of what it covers.
 - Numbered **items** under each, one line each, phrased as the question to resolve, with the **status token first** — the format the living agenda uses: `[unvisited] A1 <question>`. The IDs (`A1`, `A2`, …) are stable handles the interview and the Facilitator refer to — assign them deliberately.
 - Mark every item `[unvisited]`.
 
 **Extending an existing agenda.** You may be re-dispatched mid-run with an `initial-agenda.md` already in the lane dir — on a posture upgrade, or when the Facilitator has sanctioned a whole new concern area. When you are, you're *extending*, not rewriting: add only the requested new area(s) and their items, leave every existing area letter and item id exactly as it is, and assign fresh area letters / ids that don't collide with what's there. The frozen baseline only ever grows.
 
-Write the document as a clean description of the territory as it currently stands — no change narration, no notes about your process. When you finish, report the file path you wrote and a one-line summary of the agenda's shape (how many areas, roughly how many items, which area looks richest, the ordering logic you used to sequence it foundational-first, and — spec lane — the posture you proposed and the areas it pulled in, or — design lane — the size of the Locked block and which spec residue seeded the most items). When a givens ledger was provided, also report each given's route — `G<n> → <node-id>`, the new item added for it, or the Locked conflict flagged — for the interviewer to transcribe into the ledger.
+Write the document as a clean description of the territory as it currently stands — no change narration, no notes about your process. When you finish, report the file path you wrote and a one-line summary of the agenda's shape (how many areas, roughly how many items, the scale band you read and the delta that sized it, which area looks richest, the ordering logic you used to sequence it foundational-first, and — spec lane — the posture you proposed and the areas it pulled in, or — design lane — the size of the Locked block and which spec residue seeded the most items). When a givens ledger was provided, also report each given's route — `G<n> → <node-id>`, the new item added for it, or the Locked conflict flagged — for the interviewer to transcribe into the ledger.

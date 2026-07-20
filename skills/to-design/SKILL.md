@@ -28,9 +28,10 @@ The output is a single markdown file in the run dir, and it **leads with the inv
 ## How to run this
 
 - **Invariants first, literally.** Write the `## 0. Design Invariants & Constraints` block before any other section. Reasoning the binding constraints first is what keeps every component, contract, and decision below them consistent. Don't start §1 until §0 exists.
-- **Required spine vs conditional sections.** Some sections are **cross-cutting and always present** — the frame every design doc needs, marked `[required]` below. The rest are **conditional**: include them only when the spec's scope and domain call for them, using each section's *include-when* trigger. You must **consciously decide each conditional section in or out** — "optional" means *deliberately judged*, never *silently forgotten*; the author self-check (step 5) is where you confirm each call. A stateless CLI has no deployment section; a non-AI tool has no AI section; a pure library has no operations section — omit what the domain doesn't have.
+- **Required spine vs conditional sections.** Some sections are **cross-cutting and always present** — the frame every design doc needs, marked `[required]` below. The rest are **conditional**: include them only when the spec's scope and domain call for them, using each section's *include-when* trigger. You must **consciously decide each conditional section in or out** — "optional" means *deliberately judged*, never *silently forgotten*; the author self-check (step 5) is where you confirm each call, and each out-call is recorded in §1's `Sections omitted:` line so it is visible to cold readers and the critics. A stateless CLI has no deployment section; a non-AI tool has no AI section; a pure library has no operations section — omit what the domain doesn't have.
 - **Posture dials depth, not the spine.** Read the run's `posture` from the spec frontmatter (the design lane's Position block carries the same inherited value — never re-derive it). Posture sets how hard each included section is pressed and the bar for "resolved enough": a `poc` design resolves the core path and honestly marks the rest; a `new-system` design isn't done until security, tenancy, data-lifecycle, DR, SLOs, capacity/cost, and dependencies are all pressed. Posture never removes a required section.
 - **Never invent.** Every component, contract, `DD-`, and `RISK-` traces to something the grill settled, the spec states, or the user said — else it's tagged `(assumed — confirm)`. An included section with nothing settled uses the empty-state vocabulary below; it is never filled with best-practice boilerplate.
+- **`(auto)` closes are ordinary resolutions.** The grill's autonomous self-closes were sanctioned by their veto digests; compile them exactly like any other resolution and strip the `(auto)` marker.
 - **Four-state empty vocabulary.** A section (or subsection) with no settled content says exactly one of:
   - `N/A — <reason>` — the concern categorically doesn't apply to this system.
   - `None settled.` — it applies and matters, but the grill/spec never decided it, and it isn't blocking at this posture.
@@ -110,6 +111,8 @@ The constraints the design must honor, reasoned first. Carry spec invariants for
 ## 1. Design Overview  [required]
 
 A 3–5 sentence tl;dr of the technical approach and the shape of the solution. Links the spec it realizes.
+
+Ends with one line naming each omitted conditional section and its one-phrase reason — `Sections omitted: §9 — no AI; §14 — not deployed` — or `Sections omitted: none.`
 
 ## 2. Goals & Non-Goals (technical)  [required]
 

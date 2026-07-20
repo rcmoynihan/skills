@@ -22,7 +22,9 @@ So behavioral acceptance criteria, the external-interface *promise*, NFR *target
 ## How to run this
 
 - **Lock the invariants before the details.** Frame the problem and solution first (sections 1–2), then write the `## 3. Invariants & Non-Negotiables` block before drafting anything from section 4 onward. Reasoning the non-negotiables before the requirements, stories, and decisions is what keeps every one of them consistent — they all sit below the invariants and must honor them.
+- **Required spine vs conditional sections.** Most sections are always present, marked `[required]` below. **§7 External Interfaces** and **§10 Dependencies** are `[conditional]`: include each only when its include-when trigger fits the product, and decide each consciously in or out — "conditional" means *deliberately judged*, never *silently forgotten*. An omitted section leaves its number as a hole (§ numbers are stable ids) and is named in the `Sections omitted:` line at the end of §2.
 - **Never invent.** Every requirement, story, and acceptance criterion traces to something the grill settled or the user said. An inference you must make to keep the spec coherent is allowed only if tagged `(assumed — confirm)` — never stated as a decided requirement. Parked technical lines are *not* material for requirements or invariants — they land in §12 verbatim-in-spirit and nowhere else.
+- **`(auto)` closes are ordinary resolutions.** The grill's autonomous self-closes were sanctioned by their veto digests; compile them exactly like any other resolution and strip the `(auto)` marker.
 - **Honest about gaps.** A grill that covered little yields a *partial* spec, and that is correct. Unexplored/paused concerns become Open Questions; abandoned ones become Out of Scope. Don't paper over an untouched area.
 - **Self-contained for a cold reader.** The spec is the design grill's only required input, so it carries its own context: who the actors are (§4), what the world looks like today and why this is being built (§2), the primary journeys end to end (§5), and the run's posture (frontmatter). If a section leans on something only the conversation knew, the spec is not done.
 - **No volatile detail.** Describe the *what*, not the *how*: no specific file paths, no code snippets (one exception — a snippet that encodes a decision more precisely than prose, e.g. a schema, type shape, or state machine; trim to the decision-rich part).
@@ -56,13 +58,13 @@ Also draw on this conversation. **Standalone fallback:** if no run dir matches, 
 1. **Locate & read** the grill run (above), or fall back to the conversation.
 2. **Extract the non-negotiables early.** Pull every non-negotiable: hard constraints, decisions the user insisted on, locked tradeoffs, anything stated as a must/never. A `[consumed]` `decided` given is non-negotiable material of the first order — attribute it `Source: given (intake)`, `given (turn N)`, or `given (brief)`. `leaning` givens that shaped resolutions are ordinary decision material; for a `[superseded]` given the superseding resolution is the material, not the given; `[set-aside]` givens compile to nothing (Out of Scope only if the user said so). These become the `## 3. Invariants & Non-Negotiables` block and govern every section below them — settle them before drafting the detailed requirements, stories, and decisions, even though the problem and solution framing (sections 1–2) is written above them.
 3. **Route the grill's items:** `[resolved]` + the decision trail → the body sections; `[unvisited]`/`[paused]` → **Open Questions**; `[dropped]` → **Out of Scope**; the parking lot → **Carried-Forward Technical Notes**. Speak the grill's own vocabulary.
-4. **Draft the sections in order** (template below), each grounded in the artifacts/conversation and consistent with the invariants; drop the non-negotiables you extracted in step 2 into section 3. Fill what applies; a section with nothing gets a one-line `None.` — do not pad.
+4. **Draft the sections in order** (template below), deciding each `[conditional]` section in or out from its include-when trigger and recording the out-calls in §2's `Sections omitted:` line; each section grounded in the artifacts/conversation and consistent with the invariants; drop the non-negotiables you extracted in step 2 into section 3. Fill what applies; a required section with nothing gets a one-line `None.` — do not pad.
 5. **Consistency pass.** Re-read the invariants block and check the whole document against it: no requirement, user story, acceptance criterion, or decision may contradict an `INV-###`. Fix any that do before saving. Then run the cold-reader check: could someone who never saw the conversation run the design grill from this file alone?
 6. **Save & report.** Write to `grill-<slug>/spec.md` in the run dir. Return the absolute path + a 1–2 line summary: topic, # invariants, # requirements, # open questions, # carried-forward notes, and the word **partial** if material concern areas are still unresolved. Note that `/prior-art-check` is the recommended next step — it checks whether an existing solution already satisfies this spec before the design phase is grilled — and `/design-grill` follows when the user wants the technical side settled.
 
 ## Spec template
 
-Write the file in this shape. Coded IDs (`INV-`, `REQ-`, `CON-`, `GUD-`, `AC-`) make the spec trackable and testable; keep them sequential within each prefix.
+Write the file in this shape. `[required]` sections always appear; `[conditional]` sections appear only when their include-when trigger fits the product. Coded IDs (`INV-`, `REQ-`, `CON-`, `GUD-`, `AC-`) make the spec trackable and testable; keep them sequential within each prefix.
 
 <spec-template>
 ```markdown
@@ -76,15 +78,17 @@ terrain: <terrain pack path>   # when the run held one (Position block's terrain
 tags: [<relevant tags>]
 ---
 
-## 1. Problem Statement
+## 1. Problem Statement  [required]
 
 The problem being solved, from the user's perspective.
 
-## 2. Solution Overview, Context & Scope
+## 2. Solution Overview, Context & Scope  [required]
 
 The solution from the user's perspective; the context a cold reader needs — what exists today, why this is being built now, and the environment it lands in (cite the terrain pack where its map supplied this); the intended audience and key assumptions; what is in scope and, briefly, what is not.
 
-## 3. Invariants & Non-Negotiables
+End with one line naming each omitted conditional section and its one-phrase reason — `Sections omitted: §7 — no external interface promise; §10 — no dependencies` — or `Sections omitted: none.`
+
+## 3. Invariants & Non-Negotiables  [required]
 
 The constraints the rest of the spec must honor. They outrank every requirement, story, and decision below them.
 
@@ -93,15 +97,15 @@ The constraints the rest of the spec must honor. They outrank every requirement,
     - Source: <grill turn/node, e.g. "turn 4 (A4/E1)", "given (intake)", or "assumed — confirm">
 - **INV-002**: <…>
 
-## 4. Definitions & Actors
+## 4. Definitions & Actors  [required]
 
 Domain terms, acronyms, and the actors/personas used below, so the spec is self-contained — every actor named in a story or journey is defined here.
 
-## 5. User Journeys & Stories
+## 5. User Journeys & Stories  [required]
 
 First the 2–4 **primary journeys**, each narrated end to end: the actor, where they start, what they do, what they observe at each step, where it ends. Then an extensive, numbered story list — `As an <actor>, I want <feature>, so that <benefit>` — covering every facet the grill touched.
 
-## 6. Requirements & Constraints
+## 6. Requirements & Constraints  [required]
 
 Explicit, testable statements. A constraint that restates an invariant references its id. State NFR *targets* here (e.g. a latency or availability bound); the *mechanism* that meets them lives in the design doc.
 
@@ -109,41 +113,41 @@ Explicit, testable statements. A constraint that restates an invariant reference
 - **CON-001**: <constraint>  (e.g. "honors INV-001")
 - **GUD-001**: <guideline / recommendation>
 
-## 7. External Interfaces & Contracts
+## 7. External Interfaces & Contracts  [conditional — include when the product exposes operations, commands, or events consumers rely on]
 
 The interface *promise*, at the behavioral level: which operations / commands / events exist, what each one means, the inputs a consumer must supply and the outcomes it can rely on, and the *meaning* of errors. Wire schemas, field types, error codes, versioning mechanics, and idempotency detail are *realization* — they live in the design doc. Include a shape here only when it's a frozen contract external consumers integrate against.
 
-## 8. Acceptance Criteria
+## 8. Acceptance Criteria  [required]
 
 Testable, in Given-When-Then form, tied back to requirement ids. These behavioral promises are what the design doc's test strategy verifies against.
 
 - **AC-001**: Given <context>, when <action>, then <expected outcome>.  (REQ-001)
 
-## 9. Key Decisions & Rationale
+## 9. Key Decisions & Rationale  [required]
 
 The product and scope decisions the grill produced and *why* — what to build, for whom, what to include or defer, interaction models. **Technical/architectural decisions** — a choice with a rejected technical alternative (storage, schema, technology, algorithm) — belong to the design grill and its doc as `DD-###` ADRs, not here.
 
-## 10. Dependencies & External Integrations
+## 10. Dependencies & External Integrations  [conditional — include when outside systems, services, data, or compliance obligations are actually required]
 
 External systems, services, platforms, data, and compliance needs — *what* is required, not specific package versions. The integration *design* (clients, pooling, failover) lives in the design doc.
 
-## 11. Open Questions & Unresolved Decisions
+## 11. Open Questions & Unresolved Decisions  [required]
 
 What the grill did not settle. Each tagged with its grill node id (e.g. `C2`, `F3`). Never answered here — these are the calls still owed. If this section is large, note near the top that the spec is **partial**.
 
-## 12. Carried-Forward Technical Notes
+## 12. Carried-Forward Technical Notes  [required]
 
 Non-binding on this spec. Technical asides deflected during the product interview — inputs to the design grill's agenda. Nothing here carries spec authority. One line each, deduplicated, with origin (turn/node or intake) and any `[decided|leaning]` conviction tag preserved verbatim — a tagged line is the user's stated conviction, and the design grill picks it up as a given. `None.` if the parking lot is empty.
 
-## 13. Out of Scope
+## 13. Out of Scope  [required]
 
 Explicit non-goals, including concerns the grill deliberately dropped.
 
-## 14. Validation Criteria
+## 14. Validation Criteria  [required]
 
 How to verify a built solution meets this spec's *what* — the product-level, behavioral checks. Technical verification (test seams, load/chaos, readiness) lives in the design doc.
 
-## 15. Related / Further Reading
+## 15. Related / Further Reading  [required]
 
 Paths to the spec lane's artifacts (initial-agenda / living-agenda / conversation-path / technical-parking-lot / givens), the terrain pack when the run held one, the companion `grill-<slug>/design.md` once produced, and any other relevant docs.
 ```

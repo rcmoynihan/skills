@@ -29,6 +29,10 @@ How hard to press a claim depends on what rides on the answer — a weekend itch
 
 Stakes is not posture. Posture describes a *solution's* rigor tier, and no solution exists yet — an `adopt` or `no-go` run never gets one. Stakes dials the **evidence bar** the way posture dials depth downstream. Propose stakes at intake from the invocation; confirm it in area A; it lives in the Position block. On a `go` verdict the gate settles the downstream **posture proposal** from appetite (E) plus the chosen direction — an output recorded in the brief's frontmatter, not a dial this run uses.
 
+## Granularity — how many decisions the user adjudicates
+
+A second Position field: `granularity: <autonomous | standard | paranoid>` — propose it at intake beside stakes (not an extra turn), default `standard`, user-resettable any time with one word (logged as a `steer` row). `standard` is the loop as written. `autonomous` lets you self-close a node **only on a Scout-verified finding** — tagged `[resolved: verified (auto)]`, its own `auto` log row, and surfaced in a veto digest with the next question you ask ("Self-closed: D2 → … — veto any"; a veto reopens as a `correct`). The lane's evidence discipline caps it hard: never mint `verified` from testimony, never auto-close a B-area instance (instances are the user's recounted ground truth by definition), never auto-close as `assumed` — accepting an assumption is the user's act. **The hard floor asked in any mode:** the stakes; F-area constraints; `given (decided)` confirmations; and all of area H — candidates, selection, verdict. `paranoid` closes nothing without an explicit user confirm, states each close's evidence grade as it lands, and at the gate re-confirms the `decided` annotations and puts each finding to the user individually.
+
 ## Run directory & resuming
 
 This grill is the chain's earliest link, so it creates the run dir the whole chain lives in. Before starting a new run, check for an existing one:
@@ -56,7 +60,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/grill-<slug>/
 
 ## The three state files
 
-**`living-agenda.md`** — the working map: a **Position block** rewritten wholesale each turn — `stakes`, `phase` (`framing` or `direction`: which half of the run this is, so a resume is never ambiguous), `terrain` (the terrain pack path when the run has one, else `—`), `active`, `resume-target`, `turns-since-node-change`, `last-facilitator` — above the agenda body. Body items are status token + ID + question, statuses **`unvisited` / `active` / `paused` / `resolved` / `dropped`**; a `resolved` item carries an **evidence grade** (below) in the slot where the siblings carry a depth tag. Given and claim annotations ride on nodes (below). New items get a trailing `— reason added: <standing rationale>`.
+**`living-agenda.md`** — the working map: a **Position block** rewritten wholesale each turn — `stakes`, `granularity` (the decision-granularity mode — see above), `phase` (`framing` or `direction`: which half of the run this is, so a resume is never ambiguous), `terrain` (the terrain pack path when the run has one, else `—`), `active`, `resume-target`, `turns-since-node-change`, `last-facilitator` — above the agenda body. Body items are status token + ID + question, statuses **`unvisited` / `active` / `paused` / `resolved` / `dropped`**; a `resolved` item carries an **evidence grade** (below) in the slot where the siblings carry a depth tag. Given and claim annotations ride on nodes (below). New items get a trailing `— reason added: <standing rationale>`.
 
 **`conversation-path.md`** — the append-only turn log, the same seven columns as every lane, one row per turn:
 
@@ -64,7 +68,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/grill-<slug>/
 turn | active-node | move | summary | implication | drift | next-node
 ```
 
-`move` ∈ `answer | correct | tangent | new-concern | park | given | meta` — identical to the spec lane, which is what lets the shared Facilitator read this lane with zero retraining. `summary` and `implication` are ≤12 words each; `drift` ∈ `none | watch | deep`.
+`move` ∈ `answer | correct | tangent | new-concern | park | given | steer | auto | meta` — identical to the spec lane, which is what lets the shared Facilitator read this lane with zero retraining. `summary` and `implication` are ≤12 words each; `drift` ∈ `none | watch | deep`.
 
 **`product-parking-lot.md`** — the append-only deflection ledger. Default lines are product pulls; a technical blurt carries `[technical]`; a line may carry `[decided|leaning]` when the user stated conviction. Nothing here binds this lane: `/to-idea` compiles it into the brief's non-binding Carried-Forward Notes, and `/spec-grill`'s intake later takes the product lines as given/agenda seed material and re-files the `[technical]` lines into its own technical parking lot.
 
@@ -97,10 +101,10 @@ For a pure opportunity ("X just became possible") reframe per area rather than s
 
 ### The interview loop
 
-1. **Ask** the one next question, with your recommended answer. Wait for the user.
+1. **Ask** the one next question, with your recommended answer, led by a one-line position breadcrumb computed from the living agenda — `⟨C1 · C 1/3 · 6/19 resolved · resume: —⟩` — so the user always sees where the interview stands. Wait for the user.
 2. **Sort the reply against the lane boundary** — product or technical content parks before anything else happens.
 3. **Log** — append one row to `conversation-path.md`.
-4. **Update the map** — at most one standing item resolved per turn; grade the close; record the instance where the discipline demands one; rewrite the Position block.
+4. **Update the map** — at most one standing item resolved per user turn (`auto` closes are exempt, but each carries its own row and must appear in a digest before the gate); grade the close; record the instance where the discipline demands one; rewrite the Position block.
 5. **Check the triggers** (cheap reasoning, no tool call). If one is due, dispatch the Facilitator before asking the next question.
 
 ### Evidence grades & the one-instance discipline
@@ -131,7 +135,7 @@ A volunteered half-formed direction is none of these: it becomes candidate #1 in
 
 ### Drift recovery
 
-The moves and recoveries match the siblings, compressed: `correct` re-answers the node in place. `tangent`/`new-concern` adds a single node inline (a whole new *area* routes through the Facilitator), sets `resume-target` to the shallowest unfinished node (never overwrite an existing pointer — nesting is a hard trigger), pauses the node you're leaving, and descends. On resolution, grade the close, then climb back to `resume-target`; if none, take the next `[unvisited]` in letter order. Most tangents are *abandoned*, not resolved — you won't always notice, which is what the Facilitator is for.
+The moves and recoveries match the siblings, compressed: `correct` re-answers the node in place. `tangent`/`new-concern` adds a single node inline (a whole new *area* routes through the Facilitator), sets `resume-target` to the shallowest unfinished node (never overwrite an existing pointer — nesting is a hard trigger), pauses the node you're leaving, and descends. `steer` is the user redirecting you — honored as sanctioned (`drift: none`): a jump takes tangent bookkeeping; a skip pauses the node `[paused: user-skip]`; a defer closes it `[resolved: deferred]` on the user's call; wrap-up triages everything open in one digest and then runs the normal gate; `agenda` prints a compact map digest with the map unmoved; a granularity switch updates the Position field. On resolution, grade the close, then climb back to `resume-target`; if none, take the next `[unvisited]` in letter order — and when a close finishes its area, say so in one line: what it settled, and which area you're entering. Most tangents are *abandoned*, not resolved — you won't always notice, which is what the Facilitator is for.
 
 ### Dispatching the Scout
 
@@ -169,7 +173,7 @@ Dispatch `grill-facilitator` with `lane: idea`, the lane dir path, and the stake
 The exit is a **user-spoken verdict**, not coverage. Before putting the verdict to the user, run the **mandatory gate pass** — a Facilitator dispatch that in this lane owns both process and substance:
 
 - **process** — drift, solution bleed, the drop review (every `[dropped]` area and node), the premature-flip check;
-- **evidence** — unearned conviction: `verified` closes with no instance or Scout row behind them; a load-bearing frame resting on `testimony` at `team`+ stakes;
+- **evidence** — unearned conviction: `verified` closes (including `(auto)` ones) with no instance or Scout row behind them; an `(auto)` close never digested for veto; a load-bearing frame resting on `testimony` at `team`+ stakes;
 - **substance** — the **instances-vs-direction walk**: every recorded instance walked against the leading candidate; any instance the direction does not visibly address comes back as a finding.
 
 Surface its findings to the user plainly — including the ones that argue against going. Then ask for the verdict:
@@ -179,7 +183,7 @@ Surface its findings to the user plainly — including the ones that argue again
 - **`defer`** — name the *specific* evidence that would reopen it; that is the brief's core.
 - **`adopt <existing thing>`** — name the residual gap the user accepts.
 
-Then summarize: the verdict; the evidence-grade mix (how much of the frame is `verified` vs `testimony` vs `assumed`); the assumptions carried; the instances recorded; what was parked (count and path); any dropped areas; any terrain-pack corrections the run surfaced (reality moved past the pack — suggest `/survey-terrain` to refresh); and, on a `go`, the posture proposal. Finally, **offer** — don't auto-run — `/to-idea` to compile `grill-<slug>/idea.md`; on a `go`, that brief is what `/spec-grill` consumes. The grill produces understanding; converting it is the user's call.
+Then summarize: the verdict; the evidence-grade mix (how much of the frame is `verified` vs `testimony` vs `assumed`); how many closes were `(auto)`, each digested un-vetoed; the assumptions carried; the instances recorded; what was parked (count and path); any dropped areas; any terrain-pack corrections the run surfaced (reality moved past the pack — suggest `/survey-terrain` to refresh); and, on a `go`, the posture proposal. Finally, **offer** — don't auto-run — `/to-idea` to compile `grill-<slug>/idea.md`; on a `go`, that brief is what `/spec-grill` consumes. The grill produces understanding; converting it is the user's call.
 
 ## Templates
 
@@ -190,6 +194,7 @@ Then summarize: the verdict; the evidence-grade mix (how much of the frame is `v
 
 **Position**
 - stakes: <casual | team | strategic> — <optional note>
+- granularity: <autonomous | standard | paranoid>
 - phase: <framing | direction>
 - terrain: <pack path, or —>
 - active: <node id, or —>
@@ -204,6 +209,9 @@ Then summarize: the verdict; the evidence-grade mix (how much of the frame is `v
 ## B. Evidence & instances — <one line>
 - [resolved: verified] B1 <question> — instance: <the concrete occurrence>
 - [unvisited] B2 <question> — given (claimed): <world-fact to verify>
+
+## D. Status quo & workarounds — <one line>
+- [resolved: verified (auto)] D1 <question> — <what it closed to; scout-verified>
 
 ## F. Constraints & non-negotiables — <one line>
 - [unvisited] F1 <question> — given (decided): <one line>
@@ -223,7 +231,9 @@ Then summarize: the verdict; the evidence-grade mix (how much of the frame is `v
 | 1 | A1 | answer | stakes confirmed: team | instance or scout on load-bearing claims | none | A2 |
 | 3 | B1 | answer | instance: 2026-06 release slipped on triage | B1 verified | none | B2 |
 | 4 | C1 | park | parked: proposed auto-reply feature | product question re-asked | none | C1 |
+| 5 | D1 | auto | self-closed: workaround is manual spreadsheet triage | scout-verified; digest owed next question | none | C1 |
 | 6 | D2 | meta | scout: two SaaS tools cover triage partially (web) | adopt/buy is a live candidate | none | D2 |
+| 7 | D2 | steer | user: jump to E — appetite first | D2 paused; resume-target D2 | none | E1 |
 | 9 | H3 | meta | facilitator gate: instance 2 unaddressed by H2 | put finding to user before verdict | none | H2 |
 ```
 
