@@ -19,7 +19,7 @@ them in the manifest.
 
 ## Where skills write artifacts
 
-Skills that produce artifacts — review reports, PR response plans, grill / swarm-code
+Skills that produce artifacts — review reports, PR response plans, grill
 run state, idea briefs, specs, prior-art assessments, and design docs — write them to a
 single dedicated dir under the OS temp dir:
 
@@ -29,7 +29,7 @@ ${TMPDIR:-/tmp}/code-goblin-pro/
 
 `${TMPDIR:-/tmp}` is the base (honoring a per-user `$TMPDIR` on macOS, falling back to `/tmp`); the
 `code-goblin-pro/` subdir namespaces every skill's files in one place, keyed by run (e.g.
-`grill-<slug>/`, `swarm-code-<date>-<slug>/`, `pr-<ref>-review.md`). Any new skill that writes
+`grill-<slug>/`, `pr-<ref>-review.md`). Any new skill that writes
 scratch or deliverable files uses this dir. One deliberate exception: `survey-terrain` writes its
 terrain pack to `<repo>/.grill/terrain.md` (gitignored) — the pack must outlive tmp cleanup and be
 discoverable per repo.
@@ -51,7 +51,6 @@ discoverable per repo.
 | `prior-art-check` | `/prior-art-check` | Evaluates existing internal, open-source, and commercial options against a compiled spec before design work. |
 | `design-grill` | `/design-grill` | Interviews the technical decisions—the how—using the compiled spec as locked input. |
 | `to-design` | `/to-design` | Compiles a design grill and its spec into a technical design document. |
-| `swarm-code` | `/swarm-code` | Delivers a settled spec, design, or plan to a review-ready branch through a verified multi-agent implementation flow. |
 
 ### Review and pull-request workflow
 
@@ -100,12 +99,11 @@ technical design document.
 Start at `/spec-grill` when the product idea is already clear. For an existing codebase or
 organization, `/survey-terrain` can provide orientation before either grill. After `/to-spec`, run
 `/prior-art-check` when a build-versus-adopt decision needs evidence; a `build` or
-`adopt-with-gaps` verdict proceeds to `/design-grill`. `/swarm-code` can implement the settled
-design after `/to-design`.
+`adopt-with-gaps` verdict proceeds to `/design-grill`, and `/to-design` compiles the resulting
+technical design document.
 
 Several skills dispatch plugin agents by name. `code-review` uses the `code-review-*` review panel;
-the grill skills share `grill-*` workers; `swarm-code` uses `swarm-code-*` leads and workers; and
-`to-design` uses the `to-design-*` hardening panel.
+the grill skills share `grill-*` workers; and `to-design` uses the `to-design-*` hardening panel.
 
 ## Adding a skill
 
